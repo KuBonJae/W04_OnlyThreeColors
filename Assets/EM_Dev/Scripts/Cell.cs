@@ -8,19 +8,24 @@ public class Cell : MonoBehaviour
 {
     private Image cellImage;
     private Color originalColor;
+    private Color prevColor;
+    private ButtonManager buttonManager;
 
     void Start()
     {
         cellImage = GetComponent<Image>();
-        originalColor = cellImage.color;
-
+        originalColor = Color.white;
+        buttonManager = FindObjectOfType<ButtonManager>();
         GetComponent<Button>().onClick.AddListener(OnCellClicked);
     }
 
-
     void OnCellClicked()
     {
-        cellImage.color = cellImage.color == originalColor ? Color.black : originalColor; //일단 클릭시 검정색으로 변하도록
+        Color changeColor = buttonManager.GetSelectedColor();
+        changeColor.a = 1;
+        
+        
+        cellImage.color = cellImage.color == changeColor ? originalColor : changeColor; 
 
     }
 }
