@@ -44,7 +44,7 @@ public class GameStageManager : MonoBehaviour
     int curMoveCount = 0;
     //
     // 총 스테이지 갯수 << 스테이지 갯수 따라서 숫자 변경 해줄 것
-    int totalStageNum = 32;
+    int totalStageNum = 40;
     //
     // 스테이지 버튼들 미리 넣어두기 << 나중에 스테이지 클리어시 다음 버튼 언락 용
     [Header("Stage Buttons")]
@@ -145,7 +145,8 @@ public class GameStageManager : MonoBehaviour
         if(curMoveCount > 100)
         {
             DestoryBeakerPrefabs();
-            StartCoroutine("ResetStage"); // 프리팹 삭제 후 강제 리스타트
+            // 해당 부분은 LateUpdate로 전달
+            //StartCoroutine("ResetStage"); // 프리팹 삭제 후 강제 리스타트
         }
         //
         // 남은 횟수 ui 변경
@@ -156,6 +157,12 @@ public class GameStageManager : MonoBehaviour
             normalBlocker.SetActive(false);
         if(normalStageClearCount >= 3)
             hardBlocker.SetActive(false);
+    }
+
+    private void LateUpdate()
+    {
+        if(curMoveCount > 100)
+            StartCoroutine("ResetStage"); // 프리팹 삭제 후 강제 리스타트
     }
 
     // 스테이지 버튼 클릭 시 발생하는 함수
@@ -518,6 +525,7 @@ public class GameStageManager : MonoBehaviour
             // 스테이지 클리어 캔버스 SetActive(true)
             gameClearUI.SetActive(true);
             PracticeNote.SetActive(false);
+            noticeCanvas.SetActive(false);
             if (curStageNum < 10 && !alreadyCleared[curStageNum]) // 튜토리얼
             {
                 tutStageClearCount++;
@@ -566,15 +574,6 @@ public class GameStageManager : MonoBehaviour
         // 클리어 ui의 버튼을 눌렀다면 스테이지 클리어 했으니 갯수 답안지 버튼 오픈 및 클리어 수 추가
         if (button.transform.Find("Clear") != null)
         {
-            if (curStageNum < 10)
-                tutStageClearCount++;
-            else if (curStageNum >= 10 || curStageNum < 20)
-                easyStageClearCount++;
-            else if (curStageNum >= 20 || curStageNum < 30)
-                normalStageClearCount++;
-            else
-                hardStageClearCount++;
-
             AnswerSheetBtn.SetActive(true);
         }
         else // 플레이 화면에서 리셋 버튼 누르면
@@ -602,20 +601,12 @@ public class GameStageManager : MonoBehaviour
         if (doGameUI.activeSelf)
         {
             PracticeNote.SetActive(false);
+            noticeCanvas.SetActive(false);
             doGameUI.SetActive(false);
         }
         // 클리어 ui의 버튼을 눌렀다면 스테이지 클리어 했으니 갯수 답안지 버튼 오픈 및 클리어 수 추가
         if (button.transform.Find("Clear") != null)
         {
-            if (curStageNum < 10)
-                tutStageClearCount++;
-            else if (curStageNum >= 10 || curStageNum < 20)
-                easyStageClearCount++;
-            else if (curStageNum >= 20 || curStageNum < 30)
-                normalStageClearCount++;
-            else
-                hardStageClearCount++;
-
             AnswerSheetBtn.SetActive(true);
         }
         //
@@ -644,7 +635,16 @@ public class GameStageManager : MonoBehaviour
         }
         // 답안 패널에 나올 다른 글자들 조정
         answerPanel = AnswerPanel.transform.Find("Texts").transform;
-        answerPanel.Find("Stage Text").GetComponent<TextMeshProUGUI>().text = "선택한 스테이지 : " + playerAnswerStageNum.ToString();
+        string StageName = "";
+        if (playerAnswerStageNum < 10) // 튜토리얼
+            StageName = "선택한 스테이지 : 튜토리얼" + (playerAnswerStageNum + 1).ToString();
+        else if (playerAnswerStageNum >= 10 && playerAnswerStageNum < 20) // easy
+            StageName = "선택한 스테이지 : 쉬움" + (playerAnswerStageNum + 1 - 10).ToString();
+        else if (playerAnswerStageNum >= 20 && playerAnswerStageNum < 30) // normal
+            StageName = "선택한 스테이지 : 중간" + (playerAnswerStageNum + 1 - 20).ToString();
+        else if (playerAnswerStageNum >= 30) // hard
+            StageName = "선택한 스테이지 : 어려움" + (playerAnswerStageNum + 1 - 30).ToString();
+        answerPanel.Find("Stage Text").GetComponent<TextMeshProUGUI>().text = StageName;
         answerPanel.Find("Count Text").GetComponent<TextMeshProUGUI>().text = "내 풀이 횟수 : " + playersChoice[playerAnswerStageNum].Count.ToString();
         answerPanel.Find("CorrectCount Text").GetComponent<TextMeshProUGUI>().text = "개발자 풀이 횟수 : " + devAnswerCount[playerAnswerStageNum].ToString();
         answerPanel.Find("Restart Text").GetComponent<TextMeshProUGUI>().text = "재시작한 횟수 : " + playersRestart[playerAnswerStageNum].ToString();
