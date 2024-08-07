@@ -1073,7 +1073,7 @@ GameObject:
   - component: {fileID: 71195079}
   - component: {fileID: 71195078}
   m_Layer: 5
-  m_Name: EnterButton
+  m_Name: Tutorial1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1142,7 +1142,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 71195079}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 541092524}
+        m_TargetAssemblyTypeName: GameStageManager, Assembly-CSharp
+        m_MethodName: StageBtnClicked
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 71195078}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.UI.Button, UnityEngine.UI
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &71195079
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1665,7 +1677,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 87535474}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 541092524}
+        m_TargetAssemblyTypeName: GameStageManager, Assembly-CSharp
+        m_MethodName: GoBackBtnClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &87535474
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4813,6 +4837,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1448385936}
   - {fileID: 1699179214}
   - {fileID: 87535472}
   - {fileID: 1649787471}
@@ -6894,7 +6919,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 478186552}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 541092524}
+        m_TargetAssemblyTypeName: GameStageManager, Assembly-CSharp
+        m_MethodName: GoBackBtnClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &478186552
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7486,11 +7523,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stageDataSO: {fileID: 11400000, guid: ed19697955f590d428b875ead2dfee42, type: 2}
-  tutStageButtons: []
+  tutStageButtons:
+  - {fileID: 71195076}
+  - {fileID: 1588936519}
   easyStageButtons: []
   normalStageButtons: []
   hardStageButtons: []
-  canvas: {fileID: 664378686}
+  canvas_Beaker: {fileID: 664378686}
+  selectStageUI: {fileID: 1016643668}
+  doGameUI: {fileID: 387965664}
+  gameClearUI: {fileID: 295567559}
 --- !u!4 &541092525
 Transform:
   m_ObjectHideFlags: 0
@@ -17983,6 +18025,81 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1446668921}
   m_CullTransparentMesh: 1
+--- !u!1 &1448385935
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1448385936}
+  - component: {fileID: 1448385938}
+  - component: {fileID: 1448385937}
+  m_Layer: 5
+  m_Name: backGround
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1448385936
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1448385935}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 295567560}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 2000, y: 2000}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1448385937
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1448385935}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.5943396, g: 0.5943396, b: 0.5943396, a: 0.78431374}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1448385938
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1448385935}
+  m_CullTransparentMesh: 1
 --- !u!1 &1459380716
 GameObject:
   m_ObjectHideFlags: 0
@@ -18803,7 +18920,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1527603917}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 541092524}
+        m_TargetAssemblyTypeName: GameStageManager, Assembly-CSharp
+        m_MethodName: ResetBtnClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1527603917
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19927,7 +20056,7 @@ GameObject:
   - component: {fileID: 1588936522}
   - component: {fileID: 1588936521}
   m_Layer: 5
-  m_Name: EnterButton
+  m_Name: Tutorial2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19996,7 +20125,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1588936522}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 541092524}
+        m_TargetAssemblyTypeName: GameStageManager, Assembly-CSharp
+        m_MethodName: StageBtnClicked
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 1588936521}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.UI.Button, UnityEngine.UI
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1588936522
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21424,7 +21565,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1681639974}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 541092524}
+        m_TargetAssemblyTypeName: GameStageManager, Assembly-CSharp
+        m_MethodName: SubmitBtnClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1681639974
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21813,7 +21966,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1699179216}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 541092524}
+        m_TargetAssemblyTypeName: GameStageManager, Assembly-CSharp
+        m_MethodName: ResetBtnClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1699179216
 MonoBehaviour:
   m_ObjectHideFlags: 0
