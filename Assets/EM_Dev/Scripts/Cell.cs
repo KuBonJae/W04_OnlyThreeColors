@@ -22,25 +22,21 @@ public class Cell : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUp
         buttonManager = FindObjectOfType<ButtonManager>();
         //GetComponent<Button>().onClick.AddListener(OnCellClicked);
     }
-
-    void OnCellClicked()
-    {
-        changeColor = buttonManager.GetSelectedColor();
-        changeColor.a = 1;
+    //void OnCellClicked()
+    //{
+    //    changeColor = buttonManager.GetSelectedColor();
+    //    changeColor.a = 1;
         
         
-        cellImage.color = cellImage.color == changeColor ? originalColor : changeColor; 
+    //    cellImage.color = cellImage.color == changeColor ? originalColor : changeColor; 
 
-    }
-
+    //}
     public void OnPointerDown(PointerEventData eventData)
     {
         isDragging = true;
         changeColor = buttonManager.GetSelectedColor();
         changeColor.a = 1;
         UpdateCellColor(eventData);
-
-
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -48,6 +44,7 @@ public class Cell : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUp
         if(isDragging)
         {
             UpdateCellColor(eventData);
+            
         }
     }
 
@@ -72,7 +69,6 @@ public class Cell : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUp
                 Image childImage = child.GetComponent<Image>();
                 childImage.color = changeColor;
 
-                //childImage.color = childImage.color == changeColor ? originalColor : changeColor;
             }
         }
     }
