@@ -453,9 +453,6 @@ public class GameStageManager : MonoBehaviour
 
             // 현재 움직인 카운트 추가
             curMoveCount++;
-            if (curMoveCount == 1) // 해당 스테이지에서 처음 실행된 플레이어의 Move
-                playersChoice[curStageNum].Clear(); // 먼저 싹 비움
-            //playersChoice[curStageNum].Add(new Tuple<int, int>(fromBeaker, toBeaker));
 
             //Play Pouring SFX
             soundManager.PlayPouringSFX();
