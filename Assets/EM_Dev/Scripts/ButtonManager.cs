@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,6 +13,7 @@ public class ButtonManager : MonoBehaviour
     Button clearButton;
 
     public Transform gridParent;
+    public Transform textGridParent;
 
     public Color[] colors;
     private Color selectedColor;
@@ -36,6 +38,14 @@ public class ButtonManager : MonoBehaviour
             if(cellImage!= null)
             {
                 cellImage.color = Color.white;
+            }
+        }
+        foreach(Transform textGridChild in textGridParent)
+        {
+            TMP_InputField inputField = textGridChild.GetComponent<TMP_InputField>();
+            if(inputField != null)
+            {
+                inputField.text = string.Empty;
             }
         }
     }

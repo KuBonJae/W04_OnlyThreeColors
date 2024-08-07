@@ -1508,6 +1508,7 @@ MonoBehaviour:
   - {fileID: 298472838}
   clearButton: {fileID: 257921172}
   gridParent: {fileID: 328926866}
+  textGridParent: {fileID: 1004014937}
   colors:
   - {r: 0, g: 0, b: 0, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
