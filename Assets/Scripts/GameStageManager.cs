@@ -350,7 +350,12 @@ public class GameStageManager : MonoBehaviour
             beakerInstance.transform.Find("Name").GetComponent<TextMeshProUGUI>().text = (i + 1).ToString();
             RectTransform rectTransform = beakerInstance.GetComponent<RectTransform>();
             rectTransform.SetParent(canvas_Beaker.GetComponent<RectTransform>(), false);
-            beakerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-750 + i * 200, 0, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것
+            if(beakerSetting.beakerSize.Count > 4)
+                beakerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-750 + i * 170, 0, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것
+            else
+                beakerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-750 + i * 200, 0, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것
+
+
             beakerInstance.GetComponent<Button>().onClick.AddListener(() => BeakerSelected(beakerInstance.GetComponent<Button>()));
 
             Stack<char> charBeakerStack = new Stack<char>(beakerSetting.beakerStack[i]);
@@ -381,7 +386,11 @@ public class GameStageManager : MonoBehaviour
         answerInstance.transform.Find("Answer").gameObject.SetActive(true);
         RectTransform answerRectTransform = answerInstance.GetComponent<RectTransform>();
         answerRectTransform.SetParent(canvas_Beaker.GetComponent<RectTransform>(), false);
-        answerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-750 + (beakerSetting.beakerSize.Count) * 200, 0, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것
+        if (beakerSetting.beakerSize.Count > 4)
+            answerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-750 + (beakerSetting.beakerSize.Count) * 170, 0, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것
+        else
+            answerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-750 + (beakerSetting.beakerSize.Count) * 200, 0, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것
+
         Stack<char> answerCharSampleStack = new Stack<char>(beakerSetting.beakerAnswer);
         int c = 0;
         while (answerCharSampleStack.Count > 0)
@@ -424,6 +433,12 @@ public class GameStageManager : MonoBehaviour
         {
             //firstSelectedBeakerNum = Convert.ToInt32(button.gameObject.name);
             firstSelectedBeakerNum = Convert.ToInt32(button.transform.Find("Name").transform.GetComponent<TextMeshProUGUI>().text) - 1;
+            if (stageBeaker.curBeakerAmount[firstSelectedBeakerNum] == 0) // 빈 비커를 선택했다면
+            {
+                firstSelectedBeakerNum = 1995;
+                firstBeakerSelected = false;
+                return;
+            }
             // 선택 버튼의 indicator 표시
             button.transform.Find("Indicator").gameObject.SetActive(true);
             firstBeakerSelected = true;
