@@ -387,10 +387,10 @@ MonoBehaviour:
       - m_Target: {fileID: 541092524}
         m_TargetAssemblyTypeName: GameStageManager, Assembly-CSharp
         m_MethodName: GoBackBtnClicked
-        m_Mode: 1
+        m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_ObjectArgument: {fileID: 87535473}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.UI.Button, UnityEngine.UI
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -3194,10 +3194,10 @@ MonoBehaviour:
       - m_Target: {fileID: 541092524}
         m_TargetAssemblyTypeName: GameStageManager, Assembly-CSharp
         m_MethodName: GoBackBtnClicked
-        m_Mode: 1
+        m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_ObjectArgument: {fileID: 478186551}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.UI.Button, UnityEngine.UI
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -3450,7 +3450,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stageDataSO: {fileID: 11400000, guid: ed19697955f590d428b875ead2dfee42, type: 2}
-  devAnswerCount: 
+  devAnswerCount: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
   tutStageButtons:
   - {fileID: 1397556173}
   - {fileID: 442842825}
@@ -7218,6 +7218,10 @@ PrefabInstance:
       value: GameStageManager, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 6182819379215205738, guid: c44148fd047611543bfb4dd26230684b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgument
+      value: 
+      objectReference: {fileID: 1246169842}
+    - target: {fileID: 6182819379215205738, guid: c44148fd047611543bfb4dd26230684b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.UI.Button, UnityEngine.UI
       objectReference: {fileID: 0}
@@ -7249,6 +7253,17 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 655485564055177016, guid: c44148fd047611543bfb4dd26230684b, type: 3}
   m_PrefabInstance: {fileID: 1246169836}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1246169842 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6182819379215205738, guid: c44148fd047611543bfb4dd26230684b, type: 3}
+  m_PrefabInstance: {fileID: 1246169836}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1246169838}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1254004210
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8743,10 +8758,10 @@ MonoBehaviour:
       - m_Target: {fileID: 541092524}
         m_TargetAssemblyTypeName: GameStageManager, Assembly-CSharp
         m_MethodName: ResetBtnClicked
-        m_Mode: 1
+        m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_ObjectArgument: {fileID: 1527603916}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.UI.Button, UnityEngine.UI
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -10069,10 +10084,10 @@ MonoBehaviour:
       - m_Target: {fileID: 541092524}
         m_TargetAssemblyTypeName: GameStageManager, Assembly-CSharp
         m_MethodName: ResetBtnClicked
-        m_Mode: 1
+        m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_ObjectArgument: {fileID: 1699179215}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.UI.Button, UnityEngine.UI
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
