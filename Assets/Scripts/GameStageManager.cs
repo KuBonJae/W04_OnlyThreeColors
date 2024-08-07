@@ -566,15 +566,6 @@ public class GameStageManager : MonoBehaviour
         // 클리어 ui의 버튼을 눌렀다면 스테이지 클리어 했으니 갯수 답안지 버튼 오픈 및 클리어 수 추가
         if (button.transform.Find("Clear") != null)
         {
-            if (curStageNum < 10)
-                tutStageClearCount++;
-            else if (curStageNum >= 10 || curStageNum < 20)
-                easyStageClearCount++;
-            else if (curStageNum >= 20 || curStageNum < 30)
-                normalStageClearCount++;
-            else
-                hardStageClearCount++;
-
             AnswerSheetBtn.SetActive(true);
         }
         else // 플레이 화면에서 리셋 버튼 누르면
@@ -607,15 +598,6 @@ public class GameStageManager : MonoBehaviour
         // 클리어 ui의 버튼을 눌렀다면 스테이지 클리어 했으니 갯수 답안지 버튼 오픈 및 클리어 수 추가
         if (button.transform.Find("Clear") != null)
         {
-            if (curStageNum < 10)
-                tutStageClearCount++;
-            else if (curStageNum >= 10 || curStageNum < 20)
-                easyStageClearCount++;
-            else if (curStageNum >= 20 || curStageNum < 30)
-                normalStageClearCount++;
-            else
-                hardStageClearCount++;
-
             AnswerSheetBtn.SetActive(true);
         }
         //
@@ -644,7 +626,16 @@ public class GameStageManager : MonoBehaviour
         }
         // 답안 패널에 나올 다른 글자들 조정
         answerPanel = AnswerPanel.transform.Find("Texts").transform;
-        answerPanel.Find("Stage Text").GetComponent<TextMeshProUGUI>().text = "선택한 스테이지 : " + playerAnswerStageNum.ToString();
+        string StageName = "";
+        if (playerAnswerStageNum < 10) // 튜토리얼
+            StageName = "선택한 스테이지 : 튜토리얼" + (playerAnswerStageNum + 1).ToString();
+        else if (playerAnswerStageNum >= 10 && playerAnswerStageNum < 20) // easy
+            StageName = "선택한 스테이지 : 쉬움" + (playerAnswerStageNum + 1 - 10).ToString();
+        else if (playerAnswerStageNum >= 20 && playerAnswerStageNum < 30) // normal
+            StageName = "선택한 스테이지 : 중간" + (playerAnswerStageNum + 1 - 20).ToString();
+        else if (playerAnswerStageNum >= 30) // hard
+            StageName = "선택한 스테이지 : 어려움" + (playerAnswerStageNum + 1 - 30).ToString();
+        answerPanel.Find("Stage Text").GetComponent<TextMeshProUGUI>().text = StageName;
         answerPanel.Find("Count Text").GetComponent<TextMeshProUGUI>().text = "내 풀이 횟수 : " + playersChoice[playerAnswerStageNum].Count.ToString();
         answerPanel.Find("CorrectCount Text").GetComponent<TextMeshProUGUI>().text = "개발자 풀이 횟수 : " + devAnswerCount[playerAnswerStageNum].ToString();
         answerPanel.Find("Restart Text").GetComponent<TextMeshProUGUI>().text = "재시작한 횟수 : " + playersRestart[playerAnswerStageNum].ToString();
