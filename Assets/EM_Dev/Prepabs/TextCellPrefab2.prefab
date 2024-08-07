@@ -479,7 +479,7 @@ MonoBehaviour:
   m_CharacterValidation: 0
   m_RegexValue: 
   m_GlobalPointSize: 18
-  m_CharacterLimit: 3
+  m_CharacterLimit: 2
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls: []
@@ -531,9 +531,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 114dea178c043f0469347ff59c57b995, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onSelect:
-    m_PersistentCalls:
-      m_Calls: []
-  onDeselect:
-    m_PersistentCalls:
-      m_Calls: []
