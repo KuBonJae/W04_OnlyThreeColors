@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 //using UnityEngine.UIElements;
@@ -25,7 +26,7 @@ public class GameStageManager : MonoBehaviour
     bool submitAnswer = false;
     //
     // 프리팹이 처음 생성되는 위치
-    Vector2 beakerPosition = Vector2.zero; // 근데 이거 Canvas 상 위치가 Vector2가 맞나?
+    Vector3 beakerPosition = Vector3.zero;
     //
     // 스테이지 별 플레이어의 최근 풀이가 저장될 List
     List<List<Tuple<int, int>>> playersChoice;
@@ -34,7 +35,21 @@ public class GameStageManager : MonoBehaviour
     int totalStageNum = 12;
     //
     // 스테이지 버튼들 미리 넣어두기 << 나중에 스테이지 클리어시 다음 버튼 언락 용
-    public GameObject[] stageButtons;
+    public GameObject[] tutStageButtons;
+    public GameObject[] easyStageButtons;
+    public GameObject[] normalStageButtons;
+    public GameObject[] hardStageButtons;
+    //
+    // 클리어된 스테이지 수 -> 버튼 수와 비교해서 버튼 수의 50% 이상이 클리어 되면 다음 스테이지 버튼을 오픈
+    private int tutStageClearCount = 0;
+    private int easyStageClearCount = 0;
+    private int normalStageClearCount = 0;
+    private int hardStageClearCount = 0;
+    //
+    // 다음 스테이지 버튼 오픈 여부, 이미 오픈된 상태면 굳이 다시 SetActive(true) 할 필요 없도록 -> Tut는 항시 오픈
+    private bool easyStageOpened = false;
+    private bool normalStageOpened = false;
+    private bool hardStageOpened = false;
     //
     // 현재 스테이지 번호
     int curStageNum;
@@ -42,6 +57,14 @@ public class GameStageManager : MonoBehaviour
     // 취소 버튼의 활성화 여부 -> 옮길 비커를 한개 선택 했는데 해당 비커를 선택하고 싶지 않게 마음이 바뀌었을 때
     bool isCanceled = false;
     //
+    // 캔버스 미리 받아두기
+    public GameObject canvas;
+    //
+
+    private void Awake()
+    {
+        SetStage(0);
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -126,10 +149,19 @@ public class GameStageManager : MonoBehaviour
         for(int i=0; i< beakerSetting.beakerSize.Count; i++)
         {
             // 첫 위치에 프리팹 instantiate
-            // GameObject uiInstance = Intantiate(BeakerPrefab11, beakerPosition); // 11 크기의 비커 프리팹 생성
+            // GameObject uiInstance = Instantiate(BeakerPrefab11, beakerPosition); // 11 크기의 비커 프리팹 생성
             // 인스턴스화된 UI의 위치 조정 -> 그 다음에 추가되는 비커는 canvas의 가장 마지막 자식의 위치에서 일정 옆으로 띄워서 생성시키면 됨
             // RectTransform rectTransform = uiInstance.GetComponent<RectTransform>();
             // rectTransform.SetParent(Canvas.main.GetComponent<RectTransform>(), false); // 캔버스를 부모로 설정 -> 캔버스 이름 따라 변경
+
+            // 임시 Instantiate 연습 -> 해당 방식으로 활용하면 될 듯
+            GameObject uiInstance = Instantiate(stageDataSO.stageDatas[curStageNum].beakerPrefabs[i]);
+            uiInstance.transform.Find("Name").GetComponent<TextMeshProUGUI>().text = i.ToString();
+            RectTransform rectTransform = uiInstance.GetComponent<RectTransform>();
+            rectTransform.SetParent(canvas.GetComponent<RectTransform>(), false);
+            uiInstance.GetComponent<RectTransform>().localPosition = new Vector3(-100 + i * 200, 0, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것
+            uiInstance.GetComponent<Button>().onClick.AddListener(() => BeakerSelected(uiInstance.GetComponent<Button>()));
+            //
         }
 
     }
@@ -138,12 +170,14 @@ public class GameStageManager : MonoBehaviour
     {
         if(firstBeakerSelected)
         {
-            secondSelectedBeakerNum = Convert.ToInt32(button.gameObject.name);
+            //secondSelectedBeakerNum = Convert.ToInt32(button.gameObject.name);
+            secondSelectedBeakerNum = Convert.ToInt32(button.transform.Find("Name").transform.GetComponent<TextMeshProUGUI>().text);
             secondBeakerSelected = true;
         }
         else
         {
-            firstSelectedBeakerNum = Convert.ToInt32(button.gameObject.name);
+            //firstSelectedBeakerNum = Convert.ToInt32(button.gameObject.name);
+            firstSelectedBeakerNum = Convert.ToInt32(button.transform.Find("Name").transform.GetComponent<TextMeshProUGUI>().text);
             firstBeakerSelected = true;
             // 취소 버튼을 사용할 수 있도록 Enable로 변경할 것
 
@@ -240,6 +274,4 @@ public class GameStageManager : MonoBehaviour
         // 취소 버튼은 다시 Disable로 변경할 것
 
     }
-
-    // 선택 취소
 }

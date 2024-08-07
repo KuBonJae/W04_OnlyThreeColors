@@ -17,8 +17,14 @@ MonoBehaviour:
     <beakerRGB>k__BackingField:
     - RRRRRRRRRRR
     <answerBeaker>k__BackingField: RRRRRRRRRRR
+    <beakerPrefabs>k__BackingField:
+    - {fileID: 5409052935261004982, guid: b335de34d3c447b47b447d47bc92529b, type: 3}
+    - {fileID: 5409052935261004982, guid: b335de34d3c447b47b447d47bc92529b, type: 3}
+    - {fileID: 5409052935261004982, guid: b335de34d3c447b47b447d47bc92529b, type: 3}
+    - {fileID: 5409052935261004982, guid: b335de34d3c447b47b447d47bc92529b, type: 3}
   - <beakerSize>k__BackingField: 0b00000003000000070000000900000094010000
     <beakerRGB>k__BackingField:
     - RRRRRRRR
     - RRR
     <answerBeaker>k__BackingField: RRRRRRRRRRR
+    <beakerPrefabs>k__BackingField: []

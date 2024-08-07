@@ -3,12 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu]
-public class StageDataSO : ScriptableObject
-{
-    public List<StageData> stageDatas;
-}
-
 [Serializable]
 public class StageData
 {
@@ -18,4 +12,6 @@ public class StageData
     public List<string> beakerRGB { get; private set; }
     [field: SerializeField]
     public string answerBeaker {  get; private set; }
+    [field : SerializeField]
+    public GameObject[] beakerPrefabs { get; private set; }
 }

@@ -6,12 +6,12 @@ using System.Numerics;
 public class BeakerSetting
 {
     public List<int> beakerSize; // 비커의 총 사이즈
-    public List<int> curBeakerAmount; // 현재 비커에 차 있는 RGB 총 량
+    public List<int> curBeakerAmount = new List<int>(); // 현재 비커에 차 있는 RGB 총 량
     // string = R G B 로 이루어진 한 단어
-    public List<Stack<char>> beakerStack;
+    public List<Stack<char>> beakerStack = new List<Stack<char>>();
 
     public int playerAnswerBeakerNum; // 플레이어가 제출하는 비커 번호 -> 비커 스택에서 가장 마지막 번호가 될 듯
-    public Stack<char> beakerAnswer; // 진짜 정답을 가지고 있는 정답 비커
+    public Stack<char> beakerAnswer = new Stack<char>(); // 진짜 정답을 가지고 있는 정답 비커
 
     public BeakerSetting(List<int> L_size, List<string> L_string, string answer)
     {
