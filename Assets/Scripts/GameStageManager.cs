@@ -89,10 +89,12 @@ public class GameStageManager : MonoBehaviour
     // 현재 스테이지 클리어 시 오픈될 정답지 버튼 미리 받아두기
     private GameObject AnswerSheetBtn;
     //
+    // 사운드 재생을 위한 스크립트
+    SoundManager soundManager;
 
-    private void Awake()
+    void Awake()
     {
-        
+        soundManager = FindObjectOfType<SoundManager>();
     }
 
     // Start is called before the first frame update
@@ -443,6 +445,9 @@ public class GameStageManager : MonoBehaviour
             if (curMoveCount == 1) // 해당 스테이지에서 처음 실행된 플레이어의 Move
                 playersChoice[curStageNum].Clear(); // 먼저 싹 비움
             //playersChoice[curStageNum].Add(new Tuple<int, int>(fromBeaker, toBeaker));
+
+            //Play Pouring SFX
+            soundManager.PlayPouringSFX();
         }
         // 빈 공간이 없으면 작동 안함
     }
