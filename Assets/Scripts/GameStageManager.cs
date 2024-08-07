@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 //using UnityEngine.UIElements;
 
@@ -89,6 +90,8 @@ public class GameStageManager : MonoBehaviour
             {
                 // 둘다 선택 시 일단 selected 바로 초기화
                 firstBeakerSelected = secondBeakerSelected = isCanceled = false;
+                EventSystem.current.SetSelectedGameObject(null); // 버튼 선택된 것 해제 << 이거 해제 안하면 같은 버튼 클릭이 연속으로 안됨
+                canvas.transform.GetChild(firstSelectedBeakerNum).Find("Indicator").gameObject.SetActive(false);
                 //첫번째 비커 선택이 풀렸으니 취소 버튼도 Disable로 변경할 것
 
                 //
@@ -161,7 +164,27 @@ public class GameStageManager : MonoBehaviour
             rectTransform.SetParent(canvas.GetComponent<RectTransform>(), false);
             uiInstance.GetComponent<RectTransform>().localPosition = new Vector3(-100 + i * 200, 0, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것
             uiInstance.GetComponent<Button>().onClick.AddListener(() => BeakerSelected(uiInstance.GetComponent<Button>()));
-            //
+
+            Stack<char> charSampleStack = new Stack<char>(beakerSetting.beakerStack[i]);
+            int count = 0;
+            while(charSampleStack.Count > 0)
+            {
+                char RGB = charSampleStack.Pop();
+                switch(RGB)
+                {
+                    case 'R':
+                        canvas.transform.GetChild(i).Find("Image" + (count + 1).ToString()).GetComponent<Image>().color = Color.red;
+                        break;
+                    case 'G':
+                        canvas.transform.GetChild(i).Find("Image" + (count + 1).ToString()).GetComponent<Image>().color = Color.green;
+                        break;
+                    case 'B':
+                        canvas.transform.GetChild(i).Find("Image" + (count + 1).ToString()).GetComponent<Image>().color = Color.blue;
+                        break;
+                }
+                count++;
+            }
+            
         }
 
     }
@@ -173,12 +196,16 @@ public class GameStageManager : MonoBehaviour
             //secondSelectedBeakerNum = Convert.ToInt32(button.gameObject.name);
             secondSelectedBeakerNum = Convert.ToInt32(button.transform.Find("Name").transform.GetComponent<TextMeshProUGUI>().text);
             secondBeakerSelected = true;
+            Debug.Log("second Btn clicked");
         }
         else
         {
             //firstSelectedBeakerNum = Convert.ToInt32(button.gameObject.name);
             firstSelectedBeakerNum = Convert.ToInt32(button.transform.Find("Name").transform.GetComponent<TextMeshProUGUI>().text);
+            // 선택 버튼의 indicator 표시
+            button.transform.Find("Indicator").gameObject.SetActive(true);
             firstBeakerSelected = true;
+            Debug.Log("first Btn clicked");
             // 취소 버튼을 사용할 수 있도록 Enable로 변경할 것
 
         }
@@ -189,14 +216,27 @@ public class GameStageManager : MonoBehaviour
         if (stageBeaker.curBeakerAmount[toBeaker] < stageBeaker.beakerSize[toBeaker]) // 해당 번호의 비커가 비어있는 공간이 있을 것
         {
             while (stageBeaker.curBeakerAmount[toBeaker] < stageBeaker.beakerSize[toBeaker] // 빈 공간이 다 채워질때까지 from 쪽에서 옮겨담음 or
-                || stageBeaker.curBeakerAmount[fromBeaker] > 0) // from쪽 비커의 현재 남은 RGB 수가 0 개가 될 때까지 진행
+                && stageBeaker.curBeakerAmount[fromBeaker] > 0) // from쪽 비커의 현재 남은 RGB 수가 0 개가 될 때까지 진행 
             {
-                stageBeaker.beakerStack[toBeaker].Push(stageBeaker.beakerStack[fromBeaker].Peek()); // from 비커의 맨 위를 확인해서 to 비커에게 집어넣음
+                char RGB = stageBeaker.beakerStack[fromBeaker].Pop();
+                stageBeaker.beakerStack[toBeaker].Push(RGB); // from 비커의 맨 위를 확인해서 to 비커에게 집어넣음
+                // UI 변경되는 것 (비커 색 추가되고 감소되는 것) 은 여기에서 그때마다 바로바로 체크해주는게 좋을듯
+                switch (RGB)
+                {
+                    case 'R':
+                        canvas.transform.GetChild(toBeaker).Find("Image" + (stageBeaker.curBeakerAmount[toBeaker] + 1).ToString()).GetComponent<Image>().color = Color.red;
+                        break;
+                    case 'G':
+                        canvas.transform.GetChild(toBeaker).Find("Image" + (stageBeaker.curBeakerAmount[toBeaker] + 1).ToString()).GetComponent<Image>().color = Color.green;
+                        break;
+                    case 'B':
+                        canvas.transform.GetChild(toBeaker).Find("Image" + (stageBeaker.curBeakerAmount[toBeaker] + 1).ToString()).GetComponent<Image>().color = Color.blue;
+                        break;
+                }
+                canvas.transform.GetChild(fromBeaker).Find("Image" + (stageBeaker.curBeakerAmount[fromBeaker]).ToString()).GetComponent<Image>().color = Color.white;
+                //
                 stageBeaker.curBeakerAmount[fromBeaker]--; // from 비커의 숫자 한개 감소
                 stageBeaker.curBeakerAmount[toBeaker]++; // to 비커의 숫자 한개 증가
-
-                // UI 변경되는 것 (비커 색 추가되고 감소되는 것) 은 여기에서 그때마다 바로바로 체크해주는게 좋을듯
-
             }
         }
         // 빈 공간이 없으면 작동 안함

@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: StageDatas
   m_EditorClassIdentifier: Assembly-CSharp::StageDataSO
   stageDatas:
-  - <beakerSize>k__BackingField: 0b000000030000000700000094010000
+  - <beakerSize>k__BackingField: 04000000040000000400000094010000
     <beakerRGB>k__BackingField:
-    - RRRRRRRRRRR
-    <answerBeaker>k__BackingField: RRRRRRRRRRR
+    - RGBG
+    <answerBeaker>k__BackingField: RGBG
     <beakerPrefabs>k__BackingField:
     - {fileID: 5409052935261004982, guid: b335de34d3c447b47b447d47bc92529b, type: 3}
     - {fileID: 5409052935261004982, guid: b335de34d3c447b47b447d47bc92529b, type: 3}
