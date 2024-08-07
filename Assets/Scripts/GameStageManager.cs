@@ -32,6 +32,10 @@ public class GameStageManager : MonoBehaviour
     // 스테이지 별 플레이어의 최근 풀이가 저장될 List
     List<List<Tuple<int, int>>> playersChoice;
     //
+    // 최대 움직일 수 있는 횟수, 현재 움직인 횟수
+    const int maxMoveCount = 100;
+    int curMoveCount = 0;
+    //
     // 총 스테이지 갯수 << 스테이지 갯수 따라서 숫자 변경 해줄 것
     int totalStageNum = 12;
     //
@@ -107,6 +111,17 @@ public class GameStageManager : MonoBehaviour
                 MoveRGBToAnotherBeaker(firstSelectedBeakerNum, secondSelectedBeakerNum);
             }
         }
+
+        // 만약 남은 횟수가 0 미만이면 사망 (100번까지 가능)
+        if(curMoveCount > 100)
+        {
+            DestoryBeakerPrefabs();
+            StartCoroutine("ResetStage"); // 프리팹 삭제 후 강제 리스타트
+        }
+        //
+        // 남은 횟수 ui 변경
+
+        //
     }
 
     // 스테이지 버튼 클릭 시 발생하는 함수
@@ -115,7 +130,7 @@ public class GameStageManager : MonoBehaviour
         // 버튼 이름들로 해당 스테이지 세팅
         switch (button.gameObject.name)
         {
-            case "Tutorial1": // 비커 이름으로 세팅하긴 하는데 다른 좋은 방식 추천받습니다.
+            case "Tutorial1": // 스테이지 버튼 이름으로 세팅하긴 하는데 다른 좋은 방식 추천받습니다.
                 curStageNum = 0;
                 break;
             case "Stage1":
@@ -148,6 +163,7 @@ public class GameStageManager : MonoBehaviour
                 stageBeaker = new BeakerSetting(beakerSize, beakerString, "RRRRRRRRRRR");
                 break;
         }*/
+        ResetStageParameters();
 
         stageBeaker = new BeakerSetting(stageDataSO.stageDatas[stageNum].beakerSize,
             stageDataSO.stageDatas[stageNum].beakerRGB, stageDataSO.stageDatas[stageNum].answerBeaker);
@@ -168,10 +184,10 @@ public class GameStageManager : MonoBehaviour
 
             // 임시 Instantiate 연습 -> 해당 방식으로 활용하면 될 듯
             GameObject beakerInstance = Instantiate(stageDataSO.stageDatas[curStageNum].beakerPrefabs[i]);
-            beakerInstance.transform.Find("Name").GetComponent<TextMeshProUGUI>().text = i.ToString();
+            beakerInstance.transform.Find("Name").GetComponent<TextMeshProUGUI>().text = (i + 1).ToString();
             RectTransform rectTransform = beakerInstance.GetComponent<RectTransform>();
             rectTransform.SetParent(canvas_Beaker.GetComponent<RectTransform>(), false);
-            beakerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-300 + i * 100, 0, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것
+            beakerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-750 + i * 200, 0, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것
             beakerInstance.GetComponent<Button>().onClick.AddListener(() => BeakerSelected(beakerInstance.GetComponent<Button>()));
 
             Stack<char> charBeakerStack = new Stack<char>(beakerSetting.beakerStack[i]);
@@ -198,10 +214,11 @@ public class GameStageManager : MonoBehaviour
         // 플레이어에게 보여줄 정답 비커 (버튼 역할 x)
         GameObject answerInstance = Instantiate(stageDataSO.stageDatas[curStageNum].beakerPrefabs[beakerSetting.beakerSize.Count - 1]); // 가장 마지막 비커는 infi 비커이므로 걍 가져와서 씀
         answerInstance.transform.Find("Name").GetComponent<TextMeshProUGUI>().text = (beakerSetting.beakerSize.Count).ToString();
+        answerInstance.transform.Find("Name").gameObject.SetActive(false);
         answerInstance.transform.Find("Answer").gameObject.SetActive(true);
         RectTransform answerRectTransform = answerInstance.GetComponent<RectTransform>();
         answerRectTransform.SetParent(canvas_Beaker.GetComponent<RectTransform>(), false);
-        answerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-300 + (beakerSetting.beakerSize.Count) * 100, 0, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것
+        answerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-750 + (beakerSetting.beakerSize.Count) * 200, 0, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것
         Stack<char> answerCharSampleStack = new Stack<char>(beakerSetting.beakerAnswer);
         int c = 0;
         while (answerCharSampleStack.Count > 0)
@@ -281,6 +298,12 @@ public class GameStageManager : MonoBehaviour
                 stageBeaker.curBeakerAmount[fromBeaker]--; // from 비커의 숫자 한개 감소
                 stageBeaker.curBeakerAmount[toBeaker]++; // to 비커의 숫자 한개 증가
             }
+
+            // 현재 움직인 카운트 추가
+            curMoveCount++;
+            if (curMoveCount == 1) // 해당 스테이지에서 처음 실행된 플레이어의 Move
+                playersChoice[curStageNum].Clear(); // 먼저 싹 비움
+            playersChoice[curStageNum].Add(new Tuple<int, int>(fromBeaker, toBeaker));
         }
         // 빈 공간이 없으면 작동 안함
     }
@@ -363,6 +386,8 @@ public class GameStageManager : MonoBehaviour
         // Stage 선택 캔버스 Active;
         if (gameClearUI.activeSelf)
             gameClearUI.SetActive(false);
+        if(doGameUI.activeSelf)
+            doGameUI.SetActive(false);
 
         selectStageUI.SetActive(true);
     }
@@ -383,5 +408,14 @@ public class GameStageManager : MonoBehaviour
             Destroy(beakerPrefabsOnDisplay[i]);
         }
         beakerPrefabsOnDisplay.Clear(); // 재사용을 위해 비워두기
+    }
+
+    private void ResetStageParameters()
+    {
+        curMoveCount = 0; 
+        firstBeakerSelected = false;
+        firstSelectedBeakerNum = 1995;
+        secondBeakerSelected = false;
+        secondSelectedBeakerNum = 1995; // 첫 시작 시 스테이지에서 활용되는 파라미터들 초기화
     }
 }
