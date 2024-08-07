@@ -86,6 +86,7 @@ public class GameStageManager : MonoBehaviour
     public GameObject DeveloperPlayCount;
     public GameObject AnswerPanel;
     public GameObject PracticeNote;
+    public GameObject noticeCanvas;
     //
     // 현재 생성 되어 있는 비커 프리팹들 보관
     private List<GameObject> beakerPrefabsOnDisplay = new List<GameObject>();
@@ -665,5 +666,10 @@ public class GameStageManager : MonoBehaviour
     public void QuitBtnClicked()
     {
         Application.Quit();
+    }
+
+    public void NoticeBtnClicked()
+    {
+        noticeCanvas.SetActive(!noticeCanvas.activeInHierarchy);
     }
 }
