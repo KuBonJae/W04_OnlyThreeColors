@@ -44,7 +44,7 @@ public class GameStageManager : MonoBehaviour
     int curMoveCount = 0;
     //
     // 총 스테이지 갯수 << 스테이지 갯수 따라서 숫자 변경 해줄 것
-    int totalStageNum = 32;
+    int totalStageNum = 40;
     //
     // 스테이지 버튼들 미리 넣어두기 << 나중에 스테이지 클리어시 다음 버튼 언락 용
     [Header("Stage Buttons")]
@@ -145,7 +145,8 @@ public class GameStageManager : MonoBehaviour
         if(curMoveCount > 100)
         {
             DestoryBeakerPrefabs();
-            StartCoroutine("ResetStage"); // 프리팹 삭제 후 강제 리스타트
+            // 해당 부분은 LateUpdate로 전달
+            //StartCoroutine("ResetStage"); // 프리팹 삭제 후 강제 리스타트
         }
         //
         // 남은 횟수 ui 변경
@@ -156,6 +157,12 @@ public class GameStageManager : MonoBehaviour
             normalBlocker.SetActive(false);
         if(normalStageClearCount >= 3)
             hardBlocker.SetActive(false);
+    }
+
+    private void LateUpdate()
+    {
+        if(curMoveCount > 100)
+            StartCoroutine("ResetStage"); // 프리팹 삭제 후 강제 리스타트
     }
 
     // 스테이지 버튼 클릭 시 발생하는 함수
@@ -518,6 +525,7 @@ public class GameStageManager : MonoBehaviour
             // 스테이지 클리어 캔버스 SetActive(true)
             gameClearUI.SetActive(true);
             PracticeNote.SetActive(false);
+            noticeCanvas.SetActive(false);
             if (curStageNum < 10 && !alreadyCleared[curStageNum]) // 튜토리얼
             {
                 tutStageClearCount++;
@@ -593,6 +601,7 @@ public class GameStageManager : MonoBehaviour
         if (doGameUI.activeSelf)
         {
             PracticeNote.SetActive(false);
+            noticeCanvas.SetActive(false);
             doGameUI.SetActive(false);
         }
         // 클리어 ui의 버튼을 눌렀다면 스테이지 클리어 했으니 갯수 답안지 버튼 오픈 및 클리어 수 추가
