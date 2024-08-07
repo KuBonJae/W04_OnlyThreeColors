@@ -30,8 +30,10 @@ public class GameStageManager : MonoBehaviour
     // 프리팹이 처음 생성되는 위치
     Vector3 beakerPosition = Vector3.zero;
     //
-    // 스테이지 별 플레이어의 최근 풀이가 저장될 List
+    // 스테이지 별 플레이어의 최고기록 풀이가 저장될 List
     List<List<Tuple<int, int>>> playersChoice;
+    List<Tuple<int, int>> playersChoice_Temp; // 최고기록과 비교할 그때그때 풀이한 List
+    //
     // 스테이지 별 플레이어의 리스타트 버튼 횟수(클리어 ui에서 선택한 리스타트 제외)
     List<int> playersRestart = new List<int>();
     // 스테이지 별 개발자가 제시하는 풀이 횟수
@@ -103,7 +105,8 @@ public class GameStageManager : MonoBehaviour
     void Start()
     {
         playersChoice = new List<List<Tuple<int, int>>>();
-        for(int i=0;i< totalStageNum;i++) // 스테이지 갯수만큼 답지 List<Tuple> 을 생성해서 미리 넣어준다.
+        playersChoice_Temp = new List<Tuple<int, int>>();
+        for (int i=0;i< totalStageNum;i++) // 스테이지 갯수만큼 답지 List<Tuple> 을 생성해서 미리 넣어준다.
         {
             playersChoice.Add(new List<Tuple<int, int>>());
         }
@@ -126,8 +129,12 @@ public class GameStageManager : MonoBehaviour
                 EventSystem.current.SetSelectedGameObject(null); // 버튼 선택된 것 해제 << 이거 해제 안하면 같은 버튼 클릭이 연속으로 안됨
                 canvas_Beaker.transform.GetChild(firstSelectedBeakerNum).Find("Indicator").gameObject.SetActive(false);
                 if (curMoveCount == 0) // 해당 스테이지에서 처음 실행된 플레이어의 Move
-                    playersChoice[curStageNum].Clear(); // 먼저 싹 비움
-                playersChoice[curStageNum].Add(new Tuple<int,int>(firstSelectedBeakerNum, secondSelectedBeakerNum));
+                {
+                    //playersChoice[curStageNum].Clear(); // 먼저 싹 비움 << 이제 최고기록 저장용으로 쓸거기 때문에 비우는건 절대 안됨
+                    playersChoice_Temp.Clear(); // 임시로 사용되는 플레이어 기록 List 비우기
+                }
+                //playersChoice[curStageNum].Add(new Tuple<int,int>(firstSelectedBeakerNum, secondSelectedBeakerNum));
+                playersChoice_Temp.Add(new Tuple<int,int>(firstSelectedBeakerNum, secondSelectedBeakerNum));
                 
                 MoveRGBToAnotherBeaker(firstSelectedBeakerNum, secondSelectedBeakerNum);
             }
@@ -515,6 +522,17 @@ public class GameStageManager : MonoBehaviour
                 hardStageClearCount++;
                 alreadyCleared[curStageNum] = true;
             }
+
+            if(playersChoice[curStageNum].Count != 0) 
+            {
+                if (playersChoice_Temp.Count < playersChoice[curStageNum].Count) // 최고기록이 있는데 그것보다 작으면 변경
+                    playersChoice[curStageNum] = new List<Tuple<int, int>>(playersChoice_Temp);
+            }
+            else
+            {
+                playersChoice[curStageNum] = new List<Tuple<int, int>>(playersChoice_Temp); // 기록이 없으면 그냥 일단 넣기
+            }
+            
         }
         else 
         {
