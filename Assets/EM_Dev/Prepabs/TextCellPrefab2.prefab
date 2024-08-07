@@ -355,6 +355,7 @@ GameObject:
   - component: {fileID: 2086207745212450327}
   - component: {fileID: 6136514072926144796}
   - component: {fileID: 7104203098389757807}
+  - component: {fileID: -4317720104026943681}
   m_Layer: 5
   m_Name: TextCellPrefab2
   m_TagString: Untagged
@@ -518,3 +519,21 @@ MonoBehaviour:
   m_isRichTextEditingAllowed: 0
   m_LineLimit: 0
   m_InputValidator: {fileID: 0}
+--- !u!114 &-4317720104026943681
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9191021933786164022}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 114dea178c043f0469347ff59c57b995, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onSelect:
+    m_PersistentCalls:
+      m_Calls: []
+  onDeselect:
+    m_PersistentCalls:
+      m_Calls: []
