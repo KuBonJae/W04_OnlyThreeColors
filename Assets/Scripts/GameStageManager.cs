@@ -33,9 +33,9 @@ public class GameStageManager : MonoBehaviour
     // 스테이지 별 플레이어의 최근 풀이가 저장될 List
     List<List<Tuple<int, int>>> playersChoice;
     // 스테이지 별 플레이어의 리스타트 버튼 횟수(클리어 ui에서 선택한 리스타트 제외)
-    List<int> playersRestart = new List<int>(40);
+    List<int> playersRestart = new List<int>();
     // 스테이지 별 개발자가 제시하는 풀이 횟수
-    public List<int> devAnswerCount = new List<int>(40);
+    public List<int> devAnswerCount;
     //
     // 최대 움직일 수 있는 횟수, 현재 움직인 횟수
     const int maxMoveCount = 100;
@@ -103,6 +103,10 @@ public class GameStageManager : MonoBehaviour
         {
             playersChoice.Add(new List<Tuple<int, int>>());
         }
+        for(int i=0;i<40;i++)
+        {
+            playersRestart.Add(0);
+        }
     }
 
     // Update is called once per frame
@@ -116,12 +120,7 @@ public class GameStageManager : MonoBehaviour
                 firstBeakerSelected = secondBeakerSelected = false;
                 EventSystem.current.SetSelectedGameObject(null); // 버튼 선택된 것 해제 << 이거 해제 안하면 같은 버튼 클릭이 연속으로 안됨
                 canvas_Beaker.transform.GetChild(firstSelectedBeakerNum).Find("Indicator").gameObject.SetActive(false);
-                //첫번째 비커 선택이 풀렸으니 취소 버튼도 Disable로 변경할 것
-
-                //
-
                 playersChoice[curStageNum].Add(new Tuple<int,int>(firstSelectedBeakerNum, secondSelectedBeakerNum));
-
                 MoveRGBToAnotherBeaker(firstSelectedBeakerNum, secondSelectedBeakerNum);
             }
         }
@@ -443,7 +442,7 @@ public class GameStageManager : MonoBehaviour
             curMoveCount++;
             if (curMoveCount == 1) // 해당 스테이지에서 처음 실행된 플레이어의 Move
                 playersChoice[curStageNum].Clear(); // 먼저 싹 비움
-            playersChoice[curStageNum].Add(new Tuple<int, int>(fromBeaker, toBeaker));
+            //playersChoice[curStageNum].Add(new Tuple<int, int>(fromBeaker, toBeaker));
         }
         // 빈 공간이 없으면 작동 안함
     }
@@ -557,18 +556,20 @@ public class GameStageManager : MonoBehaviour
         // AnswerPanel 버튼 자식 이름이 숫자로 되어있음
         int playerAnswerStageNum = Convert.ToInt32(button.transform.GetChild(0).name);
         // 먼저 AnswerPanel Text들 초기화
-        Transform answerPanel = AnswerPanel.transform.Find("AnswerTexts").transform.Find("AnswerText");
-        while (answerPanel.childCount > 0)
+        Transform answerPanel = AnswerPanel.transform.Find("AnswerTexts");
+
+        //while (answerPanel.childCount > 0) // -> 이렇게 해두면 다음 프레임에 지워져서 childCount 가 계속 유지됨, 절대 안지워짐, 이렇게 할거면 코루틴으로 돌릴 것
+        for (int i = 0; i < answerPanel.childCount; i++)
         {
-            Destroy(answerPanel.GetChild(0).gameObject); // 남은 child 없을 때 까지 삭제
+            Destroy(answerPanel.GetChild(i).gameObject); // 남은 child 없을 때 까지 삭제
         }
         // 패널에 플레이어의 풀이 순서 생성
         for (int i = 0; i < playersChoice[playerAnswerStageNum].Count; i++)
         {
-            Instantiate(PlayerAnswerText);
-            PlayerAnswerText.GetComponent<TextMeshProUGUI>().text = (i + 1).ToString() + ". "
-                + playersChoice[playerAnswerStageNum][i].Item1.ToString() + " -> " + playersChoice[playerAnswerStageNum][i].Item2.ToString();
-            PlayerAnswerText.transform.SetParent(answerPanel.transform, false);
+            GameObject ansText = Instantiate(PlayerAnswerText);
+            ansText.GetComponent<TextMeshProUGUI>().text = (i + 1).ToString() + ". "
+                + (playersChoice[playerAnswerStageNum][i].Item1 + 1).ToString() + " -> " + (playersChoice[playerAnswerStageNum][i].Item2 + 1).ToString();
+            ansText.transform.SetParent(answerPanel.transform, false);
         }
         // 답안 패널에 나올 다른 글자들 조정
         answerPanel = AnswerPanel.transform.Find("Texts").transform;
@@ -598,7 +599,8 @@ public class GameStageManager : MonoBehaviour
 
     private void ResetStageParameters()
     {
-        curMoveCount = 0; 
+        curMoveCount = 0;
+        //playersChoice[curStageNum].Clear(); // 먼저 싹 비움
         firstBeakerSelected = false;
         firstSelectedBeakerNum = 1995;
         secondBeakerSelected = false;
