@@ -318,6 +318,7 @@ MonoBehaviour:
     - {fileID: 5409052935261004982, guid: 85e972acc1bc5cb4f9737e05266c0ab6, type: 3}
     - {fileID: 5409052935261004982, guid: 22ee45715afe10d4390844dadf31a980, type: 3}
     - {fileID: 5409052935261004982, guid: b335de34d3c447b47b447d47bc92529b, type: 3}
+    - {fileID: 5409052935261004982, guid: add96725a6106cb47854e49029738113, type: 3}
   - <beakerSize>k__BackingField: 0d000000070000000300000094010000
     <beakerRGB>k__BackingField:
     - GBGRBBRGGBBGB
