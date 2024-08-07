@@ -11,6 +11,7 @@ public class GameStageManager : MonoBehaviour
 {
     // 비커에 대한 프리팹들을 [SerializeField]로 미리 받아둔다
     // StageData에 List 추가해서 이쪽에 프리팹들 넣어놔도 될 것 같기도
+    [Header("SriptableObject")]
     [SerializeField]
     private StageDataSO stageDataSO;
     //
@@ -24,7 +25,7 @@ public class GameStageManager : MonoBehaviour
     int secondSelectedBeakerNum = 1995;
     //
     // 답안 제출 버튼 클릭 여부
-    bool submitAnswer = false;
+    bool submitAnswer = false; // -> update 문에서 답안 제출을 체크하지 않으므로 현재 쓰지 않음, 마지막에 지울 것
     //
     // 프리팹이 처음 생성되는 위치
     Vector3 beakerPosition = Vector3.zero;
@@ -32,16 +33,27 @@ public class GameStageManager : MonoBehaviour
     // 스테이지 별 플레이어의 최근 풀이가 저장될 List
     List<List<Tuple<int, int>>> playersChoice;
     //
+    // 최대 움직일 수 있는 횟수, 현재 움직인 횟수
+    const int maxMoveCount = 100;
+    int curMoveCount = 0;
+    //
     // 총 스테이지 갯수 << 스테이지 갯수 따라서 숫자 변경 해줄 것
-    int totalStageNum = 12;
+    int totalStageNum = 32;
     //
     // 스테이지 버튼들 미리 넣어두기 << 나중에 스테이지 클리어시 다음 버튼 언락 용
+    [Header("Stage Buttons")]
     public GameObject[] tutStageButtons;
+    public GameObject[] tutAnswerButtons;
     public GameObject[] easyStageButtons;
+    public GameObject[] easyAnswerButtons;
     public GameObject[] normalStageButtons;
+    public GameObject[] normalAnswerButtons;
     public GameObject[] hardStageButtons;
+    public GameObject[] hardAnswerButtons;
+    public GameObject normalBlocker;
+    public GameObject hardBlocker;
     //
-    // 클리어된 스테이지 수 -> 버튼 수와 비교해서 버튼 수의 50% 이상이 클리어 되면 다음 스테이지 버튼을 오픈
+    // 클리어된 스테이지 수 -> 3 이상이 되면 다음 스테이지 버튼을 오픈
     private int tutStageClearCount = 0;
     private int easyStageClearCount = 0;
     private int normalStageClearCount = 0;
@@ -55,22 +67,24 @@ public class GameStageManager : MonoBehaviour
     // 현재 스테이지 번호
     int curStageNum;
     //
-    // 취소 버튼의 활성화 여부 -> 옮길 비커를 한개 선택 했는데 해당 비커를 선택하고 싶지 않게 마음이 바뀌었을 때
-    bool isCanceled = false;
-    //
     // 캔버스 미리 받아두기
+    [Header("UI")]
     public GameObject canvas_Beaker;
     public GameObject selectStageUI;
     public GameObject doGameUI;
     public GameObject gameClearUI;
+    public GameObject PlayerAnswerText;
     //
     // 현재 생성 되어 있는 비커 프리팹들 보관
     private List<GameObject> beakerPrefabsOnDisplay = new List<GameObject>();
     //
+    // 현재 스테이지 클리어 시 오픈될 정답지 버튼 미리 받아두기
+    private GameObject AnswerSheetBtn;
+    //
 
     private void Awake()
     {
-        //SetStage(0);
+        
     }
 
     // Start is called before the first frame update
@@ -88,14 +102,10 @@ public class GameStageManager : MonoBehaviour
     {
         if(firstBeakerSelected) // 옮길 비커가 선택 되었는가?
         {
-            isCanceled = true;
-            // 첫 비커가 선택된 상태면 취소 버튼을 Enable로 변경한다.
-
-            //
             if (secondBeakerSelected) // 옮겨질 비커도 선택 되었는가?
             {
                 // 둘다 선택 시 일단 selected 바로 초기화
-                firstBeakerSelected = secondBeakerSelected = isCanceled = false;
+                firstBeakerSelected = secondBeakerSelected = false;
                 EventSystem.current.SetSelectedGameObject(null); // 버튼 선택된 것 해제 << 이거 해제 안하면 같은 버튼 클릭이 연속으로 안됨
                 canvas_Beaker.transform.GetChild(firstSelectedBeakerNum).Find("Indicator").gameObject.SetActive(false);
                 //첫번째 비커 선택이 풀렸으니 취소 버튼도 Disable로 변경할 것
@@ -107,6 +117,17 @@ public class GameStageManager : MonoBehaviour
                 MoveRGBToAnotherBeaker(firstSelectedBeakerNum, secondSelectedBeakerNum);
             }
         }
+
+        // 만약 남은 횟수가 0 미만이면 사망 (100번까지 가능)
+        if(curMoveCount > 100)
+        {
+            DestoryBeakerPrefabs();
+            StartCoroutine("ResetStage"); // 프리팹 삭제 후 강제 리스타트
+        }
+        //
+        // 남은 횟수 ui 변경
+
+        //
     }
 
     // 스테이지 버튼 클릭 시 발생하는 함수
@@ -115,12 +136,142 @@ public class GameStageManager : MonoBehaviour
         // 버튼 이름들로 해당 스테이지 세팅
         switch (button.gameObject.name)
         {
-            case "Tutorial1": // 비커 이름으로 세팅하긴 하는데 다른 좋은 방식 추천받습니다.
+            #region 튜토리얼
+            case "Tutorial1": // 스테이지 버튼 이름으로 세팅하긴 하는데 다른 좋은 방식 추천받습니다.
                 curStageNum = 0;
+                AnswerSheetBtn = tutAnswerButtons[curStageNum];
                 break;
-            case "Stage1":
+            case "Tutorial2":
                 curStageNum = 1;
+                AnswerSheetBtn = tutAnswerButtons[curStageNum];
                 break;
+            #endregion
+            #region 이지 모드
+            case "Easy1":
+                curStageNum = 10;
+                AnswerSheetBtn = easyAnswerButtons[curStageNum - 10];
+                break;
+            case "Easy2":
+                curStageNum = 11;
+                AnswerSheetBtn = easyAnswerButtons[curStageNum - 10];
+                break;
+            case "Easy3":
+                curStageNum = 12;
+                AnswerSheetBtn = easyAnswerButtons[curStageNum - 10];
+                break;
+            case "Easy4":
+                curStageNum = 13;
+                AnswerSheetBtn = easyAnswerButtons[curStageNum - 10];
+                break;
+            case "Easy5":
+                curStageNum = 14;
+                AnswerSheetBtn = easyAnswerButtons[curStageNum - 10];
+                break;
+            case "Easy6":
+                curStageNum = 15;
+                AnswerSheetBtn = easyAnswerButtons[curStageNum - 10];
+                break;
+            case "Easy7":
+                curStageNum = 16;
+                AnswerSheetBtn = easyAnswerButtons[curStageNum - 10];
+                break;
+            case "Easy8":
+                curStageNum = 17;
+                AnswerSheetBtn = easyAnswerButtons[curStageNum - 10];
+                break;
+            case "Easy9":
+                curStageNum = 18;
+                AnswerSheetBtn = easyAnswerButtons[curStageNum - 10];
+                break;
+            case "Easy10":
+                curStageNum = 19;
+                AnswerSheetBtn = easyAnswerButtons[curStageNum - 10];
+                break;
+            #endregion
+            #region 미디움 모드
+            case "Mid1":
+                curStageNum = 20;
+                AnswerSheetBtn = normalAnswerButtons[curStageNum - 20];
+                break;
+            case "Mid2":
+                curStageNum = 21;
+                AnswerSheetBtn = normalAnswerButtons[curStageNum - 20];
+                break;
+            case "Mid3":
+                curStageNum = 22;
+                AnswerSheetBtn = normalAnswerButtons[curStageNum - 20];
+                break;
+            case "Mid4":
+                curStageNum = 23;
+                AnswerSheetBtn = normalAnswerButtons[curStageNum - 20];
+                break;
+            case "Mid5":
+                curStageNum = 24;
+                AnswerSheetBtn = normalAnswerButtons[curStageNum - 20];
+                break;
+            case "Mid6":
+                curStageNum = 25;
+                AnswerSheetBtn = normalAnswerButtons[curStageNum - 20];
+                break;
+            case "Mid7":
+                curStageNum = 26;
+                AnswerSheetBtn = normalAnswerButtons[curStageNum - 20];
+                break;
+            case "Mid8":
+                curStageNum = 27;
+                AnswerSheetBtn = normalAnswerButtons[curStageNum - 20];
+                break;
+            case "Mid9":
+                curStageNum = 28;
+                AnswerSheetBtn = normalAnswerButtons[curStageNum - 20];
+                break;
+            case "Mid10":
+                curStageNum = 29;
+                AnswerSheetBtn = normalAnswerButtons[curStageNum - 20];
+                break;
+            #endregion
+            #region 하드 모드
+            case "Hard1":
+                curStageNum = 30;
+                AnswerSheetBtn = hardAnswerButtons[curStageNum - 30];
+                break;
+            case "Hard2":
+                curStageNum = 31;
+                AnswerSheetBtn = hardAnswerButtons[curStageNum - 30];
+                break;
+            case "Hard3":
+                curStageNum = 32;
+                AnswerSheetBtn = hardAnswerButtons[curStageNum - 30];
+                break;
+            case "Hard4":
+                curStageNum = 33;
+                AnswerSheetBtn = hardAnswerButtons[curStageNum - 30];
+                break;
+            case "Hard5":
+                curStageNum = 34;
+                AnswerSheetBtn = hardAnswerButtons[curStageNum - 30];
+                break;
+            case "Hard6":
+                curStageNum = 35;
+                AnswerSheetBtn = hardAnswerButtons[curStageNum - 30];
+                break;
+            case "Hard7":
+                curStageNum = 36;
+                AnswerSheetBtn = hardAnswerButtons[curStageNum - 30];
+                break;
+            case "Hard8":
+                curStageNum = 37;
+                AnswerSheetBtn = hardAnswerButtons[curStageNum - 30];
+                break;
+            case "Hard9":
+                curStageNum = 38;
+                AnswerSheetBtn = hardAnswerButtons[curStageNum - 30];
+                break;
+            case "Hard10":
+                curStageNum = 39;
+                AnswerSheetBtn = hardAnswerButtons[curStageNum - 30];
+                break;
+                #endregion
         }
         // 스테이지 캔버스 종료 및 게임 캔버스 ON
         selectStageUI.SetActive(false);
@@ -148,6 +299,7 @@ public class GameStageManager : MonoBehaviour
                 stageBeaker = new BeakerSetting(beakerSize, beakerString, "RRRRRRRRRRR");
                 break;
         }*/
+        ResetStageParameters();
 
         stageBeaker = new BeakerSetting(stageDataSO.stageDatas[stageNum].beakerSize,
             stageDataSO.stageDatas[stageNum].beakerRGB, stageDataSO.stageDatas[stageNum].answerBeaker);
@@ -166,12 +318,12 @@ public class GameStageManager : MonoBehaviour
             // RectTransform rectTransform = uiInstance.GetComponent<RectTransform>();
             // rectTransform.SetParent(Canvas.main.GetComponent<RectTransform>(), false); // 캔버스를 부모로 설정 -> 캔버스 이름 따라 변경
 
-            // 임시 Instantiate 연습 -> 해당 방식으로 활용하면 될 듯
+            // 해당 방식으로 활용하면 될 듯
             GameObject beakerInstance = Instantiate(stageDataSO.stageDatas[curStageNum].beakerPrefabs[i]);
-            beakerInstance.transform.Find("Name").GetComponent<TextMeshProUGUI>().text = i.ToString();
+            beakerInstance.transform.Find("Name").GetComponent<TextMeshProUGUI>().text = (i + 1).ToString();
             RectTransform rectTransform = beakerInstance.GetComponent<RectTransform>();
             rectTransform.SetParent(canvas_Beaker.GetComponent<RectTransform>(), false);
-            beakerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-300 + i * 100, 0, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것
+            beakerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-750 + i * 200, 0, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것
             beakerInstance.GetComponent<Button>().onClick.AddListener(() => BeakerSelected(beakerInstance.GetComponent<Button>()));
 
             Stack<char> charBeakerStack = new Stack<char>(beakerSetting.beakerStack[i]);
@@ -198,10 +350,11 @@ public class GameStageManager : MonoBehaviour
         // 플레이어에게 보여줄 정답 비커 (버튼 역할 x)
         GameObject answerInstance = Instantiate(stageDataSO.stageDatas[curStageNum].beakerPrefabs[beakerSetting.beakerSize.Count - 1]); // 가장 마지막 비커는 infi 비커이므로 걍 가져와서 씀
         answerInstance.transform.Find("Name").GetComponent<TextMeshProUGUI>().text = (beakerSetting.beakerSize.Count).ToString();
+        answerInstance.transform.Find("Name").gameObject.SetActive(false);
         answerInstance.transform.Find("Answer").gameObject.SetActive(true);
         RectTransform answerRectTransform = answerInstance.GetComponent<RectTransform>();
         answerRectTransform.SetParent(canvas_Beaker.GetComponent<RectTransform>(), false);
-        answerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-300 + (beakerSetting.beakerSize.Count) * 100, 0, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것
+        answerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-750 + (beakerSetting.beakerSize.Count) * 200, 0, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것
         Stack<char> answerCharSampleStack = new Stack<char>(beakerSetting.beakerAnswer);
         int c = 0;
         while (answerCharSampleStack.Count > 0)
@@ -239,7 +392,6 @@ public class GameStageManager : MonoBehaviour
                 return;
             }
             secondBeakerSelected = true;
-            Debug.Log("second Btn clicked");
         }
         else
         {
@@ -248,9 +400,6 @@ public class GameStageManager : MonoBehaviour
             // 선택 버튼의 indicator 표시
             button.transform.Find("Indicator").gameObject.SetActive(true);
             firstBeakerSelected = true;
-            Debug.Log("first Btn clicked");
-            // 취소 버튼을 사용할 수 있도록 Enable로 변경할 것
-
         }
     }
 
@@ -281,6 +430,12 @@ public class GameStageManager : MonoBehaviour
                 stageBeaker.curBeakerAmount[fromBeaker]--; // from 비커의 숫자 한개 감소
                 stageBeaker.curBeakerAmount[toBeaker]++; // to 비커의 숫자 한개 증가
             }
+
+            // 현재 움직인 카운트 추가
+            curMoveCount++;
+            if (curMoveCount == 1) // 해당 스테이지에서 처음 실행된 플레이어의 Move
+                playersChoice[curStageNum].Clear(); // 먼저 싹 비움
+            playersChoice[curStageNum].Add(new Tuple<int, int>(fromBeaker, toBeaker));
         }
         // 빈 공간이 없으면 작동 안함
     }
@@ -319,17 +474,6 @@ public class GameStageManager : MonoBehaviour
         {
             // 스테이지 클리어 캔버스 SetActive(true)
             gameClearUI.SetActive(true);
-            // 아래 작업들은 스테이지 클리어 캔버스에서 진행할 것 
-            //
-
-
-            // 비커 프리팹들 먼저 삭제
-
-            // 다음 스테이지 언락
-            // curStageNum << 을 활용해서 현재 클리어한 stage 버튼은 색을 약간 어둡게 만들어 주고, curStageNum + 1 번호의 버튼을 Enable() 시킴
-            
-            // 스테이지 캔버스로 변경
-
         }
         else 
         {
@@ -338,15 +482,28 @@ public class GameStageManager : MonoBehaviour
         }
     }
 
-    public void ResetBtnClicked() // 리셋 버튼과 연결
+    public void ResetBtnClicked(Button button) // 리셋 버튼과 연결
     {
         // 현재 만들어져 있는 비커 프리팹들 먼저 Destroy
         DestoryBeakerPrefabs();
         if (gameClearUI.activeSelf)
             gameClearUI.SetActive(false);
+        // 클리어 ui의 버튼을 눌렀다면 스테이지 클리어 했으니 갯수 답안지 버튼 오픈 및 클리어 수 추가
+        if (button.transform.Find("Clear") != null)
+        {
+            if (curStageNum < 10)
+                tutStageClearCount++;
+            else if (curStageNum >= 10 || curStageNum < 20)
+                easyStageClearCount++;
+            else if (curStageNum >= 20 || curStageNum < 30)
+                normalStageClearCount++;
+            else
+                hardStageClearCount++;
+
+            AnswerSheetBtn.SetActive(true);
+        }
         // 스테이지 재시작
-        //SetStage(curStageNum);
-        StartCoroutine("ResetStage"); // 이거 왜 0.1초 유예 안주면 색이 안입혀지지? << 진짜 모르겠다 ㅆㅃ;
+        StartCoroutine("ResetStage");
     }
 
     IEnumerator ResetStage()
@@ -356,18 +513,34 @@ public class GameStageManager : MonoBehaviour
         SetStage(curStageNum);
     }
 
-    public void GoBackBtnClicked() // 스테이지 창으로 돌아가기 버튼과 연결
+    public void GoBackBtnClicked(Button button) // 스테이지 창으로 돌아가기 버튼과 연결
     {
         // 현재 만들어져 있는 비커 프리팹들 먼저 Destroy
         DestoryBeakerPrefabs();
         // Stage 선택 캔버스 Active;
         if (gameClearUI.activeSelf)
             gameClearUI.SetActive(false);
+        if(doGameUI.activeSelf)
+            doGameUI.SetActive(false);
+        // 클리어 ui의 버튼을 눌렀다면 스테이지 클리어 했으니 갯수 답안지 버튼 오픈 및 클리어 수 추가
+        if (button.transform.Find("Clear") != null)
+        {
+            if (curStageNum < 10)
+                tutStageClearCount++;
+            else if (curStageNum >= 10 || curStageNum < 20)
+                easyStageClearCount++;
+            else if (curStageNum >= 20 || curStageNum < 30)
+                normalStageClearCount++;
+            else
+                hardStageClearCount++;
 
+            AnswerSheetBtn.SetActive(true);
+        }
+        //
         selectStageUI.SetActive(true);
     }
 
-    public void SelectCancelBtnClicked() // 선택 취소 버튼과 연결
+    public void SelectCancelBtnClicked() // 선택 취소 버튼과 연결 -> 현재 같은 버튼 두번 누르면 리셋이라 안씀, 마지막에 지울 것
     {
         firstBeakerSelected = false;
         firstSelectedBeakerNum = 1995; // 1995가 의미가 있는 것은 아니고 그냥 리셋한다는 의미로 넣어뒀습니다. 0이라고 하면 0번째 버튼이랑 매핑돼버려서...
@@ -383,5 +556,14 @@ public class GameStageManager : MonoBehaviour
             Destroy(beakerPrefabsOnDisplay[i]);
         }
         beakerPrefabsOnDisplay.Clear(); // 재사용을 위해 비워두기
+    }
+
+    private void ResetStageParameters()
+    {
+        curMoveCount = 0; 
+        firstBeakerSelected = false;
+        firstSelectedBeakerNum = 1995;
+        secondBeakerSelected = false;
+        secondSelectedBeakerNum = 1995; // 첫 시작 시 스테이지에서 활용되는 파라미터들 초기화
     }
 }
