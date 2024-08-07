@@ -62,6 +62,7 @@ public class GameStageManager : MonoBehaviour
     private int easyStageClearCount = 0;
     private int normalStageClearCount = 0;
     private int hardStageClearCount = 0;
+    private List<bool> alreadyCleared = new List<bool>();
     //
     // 다음 스테이지 버튼 오픈 여부, 이미 오픈된 상태면 굳이 다시 SetActive(true) 할 필요 없도록 -> Tut는 항시 오픈
     private bool easyStageOpened = false;
@@ -82,6 +83,7 @@ public class GameStageManager : MonoBehaviour
     public GameObject PlayerPlayCount;
     public GameObject DeveloperPlayCount;
     public GameObject AnswerPanel;
+    public GameObject PracticeNote;
     //
     // 현재 생성 되어 있는 비커 프리팹들 보관
     private List<GameObject> beakerPrefabsOnDisplay = new List<GameObject>();
@@ -106,6 +108,7 @@ public class GameStageManager : MonoBehaviour
         for(int i=0;i<40;i++)
         {
             playersRestart.Add(0);
+            alreadyCleared.Add(false);
         }
     }
 
@@ -120,7 +123,10 @@ public class GameStageManager : MonoBehaviour
                 firstBeakerSelected = secondBeakerSelected = false;
                 EventSystem.current.SetSelectedGameObject(null); // 버튼 선택된 것 해제 << 이거 해제 안하면 같은 버튼 클릭이 연속으로 안됨
                 canvas_Beaker.transform.GetChild(firstSelectedBeakerNum).Find("Indicator").gameObject.SetActive(false);
+                if (curMoveCount == 0) // 해당 스테이지에서 처음 실행된 플레이어의 Move
+                    playersChoice[curStageNum].Clear(); // 먼저 싹 비움
                 playersChoice[curStageNum].Add(new Tuple<int,int>(firstSelectedBeakerNum, secondSelectedBeakerNum));
+                
                 MoveRGBToAnotherBeaker(firstSelectedBeakerNum, secondSelectedBeakerNum);
             }
         }
@@ -135,6 +141,11 @@ public class GameStageManager : MonoBehaviour
         // 남은 횟수 ui 변경
         ResetCountdown.GetComponent<TextMeshProUGUI>().text = "남은 횟수 : " + (maxMoveCount - curMoveCount).ToString();
         //
+
+        if(easyStageClearCount >= 3)
+            normalBlocker.SetActive(false);
+        if(normalStageClearCount >= 3)
+            hardBlocker.SetActive(false);
     }
 
     // 스테이지 버튼 클릭 시 발생하는 함수
@@ -440,9 +451,6 @@ public class GameStageManager : MonoBehaviour
 
             // 현재 움직인 카운트 추가
             curMoveCount++;
-            if (curMoveCount == 1) // 해당 스테이지에서 처음 실행된 플레이어의 Move
-                playersChoice[curStageNum].Clear(); // 먼저 싹 비움
-            //playersChoice[curStageNum].Add(new Tuple<int, int>(fromBeaker, toBeaker));
         }
         // 빈 공간이 없으면 작동 안함
     }
@@ -481,6 +489,27 @@ public class GameStageManager : MonoBehaviour
         {
             // 스테이지 클리어 캔버스 SetActive(true)
             gameClearUI.SetActive(true);
+            PracticeNote.SetActive(false);
+            if (curStageNum < 10 && !alreadyCleared[curStageNum]) // 튜토리얼
+            {
+                tutStageClearCount++;
+                alreadyCleared[curStageNum] = true;
+            }
+            else if (curStageNum >= 10 && curStageNum < 20 && !alreadyCleared[curStageNum])
+            {
+                easyStageClearCount++;
+                alreadyCleared[curStageNum] = true;
+            }
+            else if (curStageNum >= 20 && curStageNum < 30 && !alreadyCleared[curStageNum])
+            {
+                normalStageClearCount++;
+                alreadyCleared[curStageNum] = true;
+            }
+            else if(curStageNum>=30 && !alreadyCleared[curStageNum])
+            {
+                hardStageClearCount++;
+                alreadyCleared[curStageNum] = true;
+            }
         }
         else 
         {
@@ -531,8 +560,11 @@ public class GameStageManager : MonoBehaviour
         // Stage 선택 캔버스 Active;
         if (gameClearUI.activeSelf)
             gameClearUI.SetActive(false);
-        if(doGameUI.activeSelf)
+        if (doGameUI.activeSelf)
+        {
+            PracticeNote.SetActive(false);
             doGameUI.SetActive(false);
+        }
         // 클리어 ui의 버튼을 눌렀다면 스테이지 클리어 했으니 갯수 답안지 버튼 오픈 및 클리어 수 추가
         if (button.transform.Find("Clear") != null)
         {
