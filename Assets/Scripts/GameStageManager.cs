@@ -59,12 +59,18 @@ public class GameStageManager : MonoBehaviour
     bool isCanceled = false;
     //
     // 캔버스 미리 받아두기
-    public GameObject canvas;
+    public GameObject canvas_Beaker;
+    public GameObject selectStageUI;
+    public GameObject doGameUI;
+    public GameObject gameClearUI;
+    //
+    // 현재 생성 되어 있는 비커 프리팹들 보관
+    private List<GameObject> beakerPrefabsOnDisplay = new List<GameObject>();
     //
 
     private void Awake()
     {
-        SetStage(0);
+        //SetStage(0);
     }
 
     // Start is called before the first frame update
@@ -91,7 +97,7 @@ public class GameStageManager : MonoBehaviour
                 // 둘다 선택 시 일단 selected 바로 초기화
                 firstBeakerSelected = secondBeakerSelected = isCanceled = false;
                 EventSystem.current.SetSelectedGameObject(null); // 버튼 선택된 것 해제 << 이거 해제 안하면 같은 버튼 클릭이 연속으로 안됨
-                canvas.transform.GetChild(firstSelectedBeakerNum).Find("Indicator").gameObject.SetActive(false);
+                canvas_Beaker.transform.GetChild(firstSelectedBeakerNum).Find("Indicator").gameObject.SetActive(false);
                 //첫번째 비커 선택이 풀렸으니 취소 버튼도 Disable로 변경할 것
 
                 //
@@ -116,6 +122,9 @@ public class GameStageManager : MonoBehaviour
                 curStageNum = 1;
                 break;
         }
+        // 스테이지 캔버스 종료 및 게임 캔버스 ON
+        selectStageUI.SetActive(false);
+        doGameUI.SetActive(true);
         // 비커 세팅 함수
         SetStage(curStageNum);
     }
@@ -149,7 +158,7 @@ public class GameStageManager : MonoBehaviour
     private void SetBeakerUI(BeakerSetting beakerSetting)
     {
         // 비커 사이즈에 따라 순서대로 프리팹을 불러와 위치시킴
-        for(int i=0; i< beakerSetting.beakerSize.Count; i++)
+        for (int i = 0; i < beakerSetting.beakerSize.Count; i++) 
         {
             // 첫 위치에 프리팹 instantiate
             // GameObject uiInstance = Instantiate(BeakerPrefab11, beakerPosition); // 11 크기의 비커 프리팹 생성
@@ -158,35 +167,61 @@ public class GameStageManager : MonoBehaviour
             // rectTransform.SetParent(Canvas.main.GetComponent<RectTransform>(), false); // 캔버스를 부모로 설정 -> 캔버스 이름 따라 변경
 
             // 임시 Instantiate 연습 -> 해당 방식으로 활용하면 될 듯
-            GameObject uiInstance = Instantiate(stageDataSO.stageDatas[curStageNum].beakerPrefabs[i]);
-            uiInstance.transform.Find("Name").GetComponent<TextMeshProUGUI>().text = i.ToString();
-            RectTransform rectTransform = uiInstance.GetComponent<RectTransform>();
-            rectTransform.SetParent(canvas.GetComponent<RectTransform>(), false);
-            uiInstance.GetComponent<RectTransform>().localPosition = new Vector3(-100 + i * 200, 0, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것
-            uiInstance.GetComponent<Button>().onClick.AddListener(() => BeakerSelected(uiInstance.GetComponent<Button>()));
+            GameObject beakerInstance = Instantiate(stageDataSO.stageDatas[curStageNum].beakerPrefabs[i]);
+            beakerInstance.transform.Find("Name").GetComponent<TextMeshProUGUI>().text = i.ToString();
+            RectTransform rectTransform = beakerInstance.GetComponent<RectTransform>();
+            rectTransform.SetParent(canvas_Beaker.GetComponent<RectTransform>(), false);
+            beakerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-300 + i * 100, 0, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것
+            beakerInstance.GetComponent<Button>().onClick.AddListener(() => BeakerSelected(beakerInstance.GetComponent<Button>()));
 
-            Stack<char> charSampleStack = new Stack<char>(beakerSetting.beakerStack[i]);
+            Stack<char> charBeakerStack = new Stack<char>(beakerSetting.beakerStack[i]);
             int count = 0;
-            while(charSampleStack.Count > 0)
+            while(charBeakerStack.Count > 0)
             {
-                char RGB = charSampleStack.Pop();
+                char RGB = charBeakerStack.Pop();
                 switch(RGB)
                 {
                     case 'R':
-                        canvas.transform.GetChild(i).Find("Image" + (count + 1).ToString()).GetComponent<Image>().color = Color.red;
+                        canvas_Beaker.transform.GetChild(i).Find("Image" + (count + 1).ToString()).GetComponent<Image>().color = Color.red;
                         break;
                     case 'G':
-                        canvas.transform.GetChild(i).Find("Image" + (count + 1).ToString()).GetComponent<Image>().color = Color.green;
+                        canvas_Beaker.transform.GetChild(i).Find("Image" + (count + 1).ToString()).GetComponent<Image>().color = Color.green;
                         break;
                     case 'B':
-                        canvas.transform.GetChild(i).Find("Image" + (count + 1).ToString()).GetComponent<Image>().color = Color.blue;
+                        canvas_Beaker.transform.GetChild(i).Find("Image" + (count + 1).ToString()).GetComponent<Image>().color = Color.blue;
                         break;
                 }
                 count++;
             }
-            
+            beakerPrefabsOnDisplay.Add(beakerInstance); // 생성된 비커들 저장 -> 나중에 destroy 해야됨
         }
-
+        // 플레이어에게 보여줄 정답 비커 (버튼 역할 x)
+        GameObject answerInstance = Instantiate(stageDataSO.stageDatas[curStageNum].beakerPrefabs[beakerSetting.beakerSize.Count - 1]); // 가장 마지막 비커는 infi 비커이므로 걍 가져와서 씀
+        answerInstance.transform.Find("Name").GetComponent<TextMeshProUGUI>().text = (beakerSetting.beakerSize.Count).ToString();
+        answerInstance.transform.Find("Answer").gameObject.SetActive(true);
+        RectTransform answerRectTransform = answerInstance.GetComponent<RectTransform>();
+        answerRectTransform.SetParent(canvas_Beaker.GetComponent<RectTransform>(), false);
+        answerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-300 + (beakerSetting.beakerSize.Count) * 100, 0, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것
+        Stack<char> answerCharSampleStack = new Stack<char>(beakerSetting.beakerAnswer);
+        int c = 0;
+        while (answerCharSampleStack.Count > 0)
+        {
+            c++;
+            char RGB = answerCharSampleStack.Pop();
+            switch (RGB)
+            {
+                case 'R':
+                    canvas_Beaker.transform.GetChild(beakerSetting.beakerSize.Count).Find("Image" + (c).ToString()).GetComponent<Image>().color = Color.red;
+                    break;
+                case 'G':
+                    canvas_Beaker.transform.GetChild(beakerSetting.beakerSize.Count).Find("Image" + (c).ToString()).GetComponent<Image>().color = Color.green;
+                    break;
+                case 'B':
+                    canvas_Beaker.transform.GetChild(beakerSetting.beakerSize.Count).Find("Image" + (c).ToString()).GetComponent<Image>().color = Color.blue;
+                    break;
+            }
+        }
+        beakerPrefabsOnDisplay.Add(answerInstance); // 생성된 정답 비커도 저장
     }
 
     public void BeakerSelected(Button button) // 제출용 비커의 이름은 404 << 로 할 것
@@ -224,16 +259,16 @@ public class GameStageManager : MonoBehaviour
                 switch (RGB)
                 {
                     case 'R':
-                        canvas.transform.GetChild(toBeaker).Find("Image" + (stageBeaker.curBeakerAmount[toBeaker] + 1).ToString()).GetComponent<Image>().color = Color.red;
+                        canvas_Beaker.transform.GetChild(toBeaker).Find("Image" + (stageBeaker.curBeakerAmount[toBeaker] + 1).ToString()).GetComponent<Image>().color = Color.red;
                         break;
                     case 'G':
-                        canvas.transform.GetChild(toBeaker).Find("Image" + (stageBeaker.curBeakerAmount[toBeaker] + 1).ToString()).GetComponent<Image>().color = Color.green;
+                        canvas_Beaker.transform.GetChild(toBeaker).Find("Image" + (stageBeaker.curBeakerAmount[toBeaker] + 1).ToString()).GetComponent<Image>().color = Color.green;
                         break;
                     case 'B':
-                        canvas.transform.GetChild(toBeaker).Find("Image" + (stageBeaker.curBeakerAmount[toBeaker] + 1).ToString()).GetComponent<Image>().color = Color.blue;
+                        canvas_Beaker.transform.GetChild(toBeaker).Find("Image" + (stageBeaker.curBeakerAmount[toBeaker] + 1).ToString()).GetComponent<Image>().color = Color.blue;
                         break;
                 }
-                canvas.transform.GetChild(fromBeaker).Find("Image" + (stageBeaker.curBeakerAmount[fromBeaker]).ToString()).GetComponent<Image>().color = Color.white;
+                canvas_Beaker.transform.GetChild(fromBeaker).Find("Image" + (stageBeaker.curBeakerAmount[fromBeaker]).ToString()).GetComponent<Image>().color = Color.white;
                 //
                 stageBeaker.curBeakerAmount[fromBeaker]--; // from 비커의 숫자 한개 감소
                 stageBeaker.curBeakerAmount[toBeaker]++; // to 비커의 숫자 한개 증가
@@ -242,10 +277,10 @@ public class GameStageManager : MonoBehaviour
         // 빈 공간이 없으면 작동 안함
     }
 
-    public void AnswerBtnClicked()
+    public void SubmitBtnClicked()
     {
-        Stack<char> playerAnswerStack = stageBeaker.beakerStack[stageBeaker.playerAnswerBeakerNum];
-        Stack<char> AnswerStack = stageBeaker.beakerAnswer;
+        Stack<char> playerAnswerStack = new Stack<char>(stageBeaker.beakerStack[stageBeaker.playerAnswerBeakerNum]);
+        Stack<char> AnswerStack = new Stack<char>(stageBeaker.beakerAnswer);
         bool stageClear = true; // 별 일 없으면 스테이지 클리어로 체크할 boolean
 
         if(AnswerStack.Count != playerAnswerStack.Count)
@@ -275,6 +310,10 @@ public class GameStageManager : MonoBehaviour
         if(stageClear)
         {
             // 스테이지 클리어 캔버스 SetActive(true)
+            gameClearUI.SetActive(true);
+            // 아래 작업들은 스테이지 클리어 캔버스에서 진행할 것 
+            //
+
 
             // 비커 프리팹들 먼저 삭제
 
@@ -293,9 +332,18 @@ public class GameStageManager : MonoBehaviour
 
     public void ResetBtnClicked() // 리셋 버튼과 연결
     {
-        // 기존에 세팅되어 있는 비커 프리팹들 보관해 뒀다가 먼저 Destory 할 것
-        // Destroy( );
+        // 현재 만들어져 있는 비커 프리팹들 먼저 Destroy
+        DestoryBeakerPrefabs();
+        if (gameClearUI.activeSelf)
+            gameClearUI.SetActive(false);
+        // 스테이지 재시작
+        //SetStage(curStageNum);
+        StartCoroutine("ResetStage"); // 이거 왜 0.1초 유예 안주면 색이 안입혀지지? << 진짜 모르겠다 ㅆㅃ;
+    }
 
+    IEnumerator ResetStage()
+    {
+        yield return new WaitForSecondsRealtime(0.1f);
         // 스테이지 재시작
         SetStage(curStageNum);
     }
@@ -303,8 +351,12 @@ public class GameStageManager : MonoBehaviour
     public void GoBackBtnClicked() // 스테이지 창으로 돌아가기 버튼과 연결
     {
         // 현재 만들어져 있는 비커 프리팹들 먼저 Destroy
-
+        DestoryBeakerPrefabs();
         // Stage 선택 캔버스 Active;
+        if (gameClearUI.activeSelf)
+            gameClearUI.SetActive(false);
+
+        selectStageUI.SetActive(true);
     }
 
     public void SelectCancelBtnClicked() // 선택 취소 버튼과 연결
@@ -313,5 +365,15 @@ public class GameStageManager : MonoBehaviour
         firstSelectedBeakerNum = 1995; // 1995가 의미가 있는 것은 아니고 그냥 리셋한다는 의미로 넣어뒀습니다. 0이라고 하면 0번째 버튼이랑 매핑돼버려서...
         // 취소 버튼은 다시 Disable로 변경할 것
 
+    }
+
+    private void DestoryBeakerPrefabs()
+    {
+        // 현재 만들어져 있는 비커 프리팹들 먼저 Destroy
+        for (int i = 0; i < beakerPrefabsOnDisplay.Count; i++)
+        {
+            Destroy(beakerPrefabsOnDisplay[i]);
+        }
+        beakerPrefabsOnDisplay.Clear(); // 재사용을 위해 비워두기
     }
 }
