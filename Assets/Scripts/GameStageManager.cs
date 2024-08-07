@@ -31,7 +31,7 @@ public class GameStageManager : MonoBehaviour
     Vector3 beakerPosition = Vector3.zero;
     //
     // 스테이지 별 플레이어의 최고기록 풀이가 저장될 List
-    List<List<Tuple<int, int>>> playersChoice;
+    public List<List<Tuple<int, int>>> playersChoice;
     List<Tuple<int, int>> playersChoice_Temp; // 최고기록과 비교할 그때그때 풀이한 List
     //
     // 스테이지 별 플레이어의 리스타트 버튼 횟수(클리어 ui에서 선택한 리스타트 제외)
