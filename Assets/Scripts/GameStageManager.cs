@@ -230,6 +230,14 @@ public class GameStageManager : MonoBehaviour
         {
             //secondSelectedBeakerNum = Convert.ToInt32(button.gameObject.name);
             secondSelectedBeakerNum = Convert.ToInt32(button.transform.Find("Name").transform.GetComponent<TextMeshProUGUI>().text);
+            if(secondSelectedBeakerNum == firstSelectedBeakerNum) // 둘이 같으면 그냥 초기화
+            {
+                firstSelectedBeakerNum = 1995;
+                secondSelectedBeakerNum = 1995;
+                button.transform.Find("Indicator").gameObject.SetActive(false);
+                firstBeakerSelected = false;
+                return;
+            }
             secondBeakerSelected = true;
             Debug.Log("second Btn clicked");
         }
@@ -343,7 +351,7 @@ public class GameStageManager : MonoBehaviour
 
     IEnumerator ResetStage()
     {
-        yield return new WaitForSecondsRealtime(0.1f);
+        yield return null;
         // 스테이지 재시작
         SetStage(curStageNum);
     }
