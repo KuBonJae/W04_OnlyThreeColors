@@ -23,6 +23,7 @@ public class ScoreManager : MonoBehaviour
     private void Start()
     {
         texts = answerTexts.GetComponentsInChildren<TextMeshProUGUI>();
+        ResetLeaderboard();
     }
 
     public void RegisterUserInFirebase()
