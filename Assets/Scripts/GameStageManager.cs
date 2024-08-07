@@ -390,7 +390,7 @@ public class GameStageManager : MonoBehaviour
         if(firstBeakerSelected)
         {
             //secondSelectedBeakerNum = Convert.ToInt32(button.gameObject.name);
-            secondSelectedBeakerNum = Convert.ToInt32(button.transform.Find("Name").transform.GetComponent<TextMeshProUGUI>().text);
+            secondSelectedBeakerNum = Convert.ToInt32(button.transform.Find("Name").transform.GetComponent<TextMeshProUGUI>().text) - 1;
             if(secondSelectedBeakerNum == firstSelectedBeakerNum) // 둘이 같으면 그냥 초기화
             {
                 firstSelectedBeakerNum = 1995;
@@ -404,7 +404,7 @@ public class GameStageManager : MonoBehaviour
         else
         {
             //firstSelectedBeakerNum = Convert.ToInt32(button.gameObject.name);
-            firstSelectedBeakerNum = Convert.ToInt32(button.transform.Find("Name").transform.GetComponent<TextMeshProUGUI>().text);
+            firstSelectedBeakerNum = Convert.ToInt32(button.transform.Find("Name").transform.GetComponent<TextMeshProUGUI>().text) - 1;
             // 선택 버튼의 indicator 표시
             button.transform.Find("Indicator").gameObject.SetActive(true);
             firstBeakerSelected = true;
