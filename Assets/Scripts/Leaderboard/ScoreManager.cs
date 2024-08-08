@@ -11,6 +11,7 @@ public class ScoreManager : MonoBehaviour
 {
     [SerializeField] TMP_InputField inputName;
     [SerializeField] GameObject answerTexts;
+    [SerializeField] GameObject warningText;
 
     GameStageManager gameStageManager;
     TextMeshProUGUI[] texts;
@@ -26,8 +27,21 @@ public class ScoreManager : MonoBehaviour
         ResetLeaderboard();
     }
 
+    IEnumerator PopupWarningText()
+    {
+        warningText.SetActive(true);
+        yield return new WaitForSeconds(1f);
+        warningText.SetActive(false);
+    }
+
     public void RegisterUserInFirebase()
     {
+        if (inputName.text.Length > 10)
+        {
+            StartCoroutine(PopupWarningText());
+            return;
+        }
+
         List<int> scoresByStages = new List<int>();
 
         for (int i = 10; i < 35; i++)
