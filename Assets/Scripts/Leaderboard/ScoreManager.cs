@@ -76,13 +76,13 @@ public class ScoreManager : MonoBehaviour
             playerScoreListByStage.Sort((x, y) => x.Item2.CompareTo(y.Item2));
 
             // only show 50 players
-            if(playerScoreListByStage.Count > 50)
+            if (playerScoreListByStage.Count > 50)
             {
                 playerScoreListByStage.RemoveRange(50, playerScoreListByStage.Count - 50);
             }
             for (int i = 0; i < playerScoreListByStage.Count; i++)
             {
-                texts[i].SetText($"{i}. {playerScoreListByStage[i].Item1} : {playerScoreListByStage[i].Item2}");
+                texts[i].SetText($"{i + 1}. {playerScoreListByStage[i].Item1} : {playerScoreListByStage[i].Item2}");
             }
 
             #region JSON_examples
@@ -107,6 +107,50 @@ public class ScoreManager : MonoBehaviour
             #endregion
         });
     }
+
+        public void UpdateLeaderBoardShowingClearCounts()
+        {
+            ResetLeaderboard();
+
+            List<Tuple<string, int>> playerScoreListByStage = new();
+            RestClient.Get("https://three-colors-and-beakers-default-rtdb.firebaseio.com/Users/.json").Then(response =>
+            {
+                var json = JSON.Parse(response.Text);
+                print(json);
+
+                for (int i = 0; i < json.Count; i++)
+                {
+                    string userName = json[i]["name"].Value;
+                    var scoreOfStage = json[i]["scoresByStages"];
+                    int count = 0;
+
+                    for (int j=0; j< scoreOfStage.Count; j++)
+                    {
+                        if (int.Parse(scoreOfStage[j].Value) != 0)
+                        {
+                            count++;
+                        }
+                    }
+
+                    if(count !=0)
+                    {
+                        playerScoreListByStage.Add(new Tuple<string, int>(userName, count) );
+                    }
+                }
+
+                playerScoreListByStage.Sort((x, y) => y.Item2.CompareTo(x.Item2));
+
+                // only show 50 players
+                if (playerScoreListByStage.Count > 50)
+                {
+                    playerScoreListByStage.RemoveRange(50, playerScoreListByStage.Count - 50);
+                }
+                for (int i = 0; i < playerScoreListByStage.Count; i++)
+                {
+                    texts[i].SetText($"{i+1}. {playerScoreListByStage[i].Item1} : {playerScoreListByStage[i].Item2}");
+                }
+            });
+        }
 
     void ResetLeaderboard()
     {
