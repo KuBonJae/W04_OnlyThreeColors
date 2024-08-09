@@ -96,6 +96,9 @@ public class GameStageManager : MonoBehaviour
     //
     // 사운드 재생을 위한 스크립트
     SoundManager soundManager;
+    //
+    // 컬러 코드
+    Color[] colors;
 
     void Awake()
     {
@@ -116,6 +119,12 @@ public class GameStageManager : MonoBehaviour
             playersRestart.Add(0);
             alreadyCleared.Add(false);
         }
+
+        // 컬러 추가
+        colors = new Color[3];
+        ColorUtility.TryParseHtmlString("#FF8888", out colors[0]);
+        ColorUtility.TryParseHtmlString("#88FF88", out colors[1]);
+        ColorUtility.TryParseHtmlString("#8888FF", out colors[2]);
     }
 
     // Update is called once per frame
@@ -389,13 +398,13 @@ public class GameStageManager : MonoBehaviour
                 switch(RGB)
                 {
                     case 'R':
-                        canvas_Beaker.transform.GetChild(i).Find("Image" + (count + 1).ToString()).GetComponent<Image>().color = Color.red;
+                        canvas_Beaker.transform.GetChild(i).Find("Image" + (count + 1).ToString()).GetComponent<Image>().color = colors[0];
                         break;
                     case 'G':
-                        canvas_Beaker.transform.GetChild(i).Find("Image" + (count + 1).ToString()).GetComponent<Image>().color = Color.green;
+                        canvas_Beaker.transform.GetChild(i).Find("Image" + (count + 1).ToString()).GetComponent<Image>().color = colors[1];
                         break;
                     case 'B':
-                        canvas_Beaker.transform.GetChild(i).Find("Image" + (count + 1).ToString()).GetComponent<Image>().color = Color.blue;
+                        canvas_Beaker.transform.GetChild(i).Find("Image" + (count + 1).ToString()).GetComponent<Image>().color = colors[2];
                         break;
                 }
                 count++;
@@ -423,13 +432,13 @@ public class GameStageManager : MonoBehaviour
             switch (RGB)
             {
                 case 'R':
-                    canvas_Beaker.transform.GetChild(beakerSetting.beakerSize.Count).Find("Image" + (c).ToString()).GetComponent<Image>().color = Color.red;
+                    canvas_Beaker.transform.GetChild(beakerSetting.beakerSize.Count).Find("Image" + (c).ToString()).GetComponent<Image>().color = colors[0];
                     break;
                 case 'G':
-                    canvas_Beaker.transform.GetChild(beakerSetting.beakerSize.Count).Find("Image" + (c).ToString()).GetComponent<Image>().color = Color.green;
+                    canvas_Beaker.transform.GetChild(beakerSetting.beakerSize.Count).Find("Image" + (c).ToString()).GetComponent<Image>().color = colors[1];
                     break;
                 case 'B':
-                    canvas_Beaker.transform.GetChild(beakerSetting.beakerSize.Count).Find("Image" + (c).ToString()).GetComponent<Image>().color = Color.blue;
+                    canvas_Beaker.transform.GetChild(beakerSetting.beakerSize.Count).Find("Image" + (c).ToString()).GetComponent<Image>().color = colors[2];
                     break;
             }
         }
@@ -481,13 +490,13 @@ public class GameStageManager : MonoBehaviour
                 switch (RGB)
                 {
                     case 'R':
-                        canvas_Beaker.transform.GetChild(toBeaker).Find("Image" + (stageBeaker.curBeakerAmount[toBeaker] + 1).ToString()).GetComponent<Image>().color = Color.red;
+                        canvas_Beaker.transform.GetChild(toBeaker).Find("Image" + (stageBeaker.curBeakerAmount[toBeaker] + 1).ToString()).GetComponent<Image>().color = colors[0];
                         break;
                     case 'G':
-                        canvas_Beaker.transform.GetChild(toBeaker).Find("Image" + (stageBeaker.curBeakerAmount[toBeaker] + 1).ToString()).GetComponent<Image>().color = Color.green;
+                        canvas_Beaker.transform.GetChild(toBeaker).Find("Image" + (stageBeaker.curBeakerAmount[toBeaker] + 1).ToString()).GetComponent<Image>().color = colors[1];
                         break;
                     case 'B':
-                        canvas_Beaker.transform.GetChild(toBeaker).Find("Image" + (stageBeaker.curBeakerAmount[toBeaker] + 1).ToString()).GetComponent<Image>().color = Color.blue;
+                        canvas_Beaker.transform.GetChild(toBeaker).Find("Image" + (stageBeaker.curBeakerAmount[toBeaker] + 1).ToString()).GetComponent<Image>().color = colors[2];
                         break;
                 }
                 canvas_Beaker.transform.GetChild(fromBeaker).Find("Image" + (stageBeaker.curBeakerAmount[fromBeaker]).ToString()).GetComponent<Image>().color = Color.white;
