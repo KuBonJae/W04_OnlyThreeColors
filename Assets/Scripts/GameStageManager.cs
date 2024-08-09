@@ -356,12 +356,27 @@ public class GameStageManager : MonoBehaviour
             // 해당 방식으로 활용하면 될 듯
             GameObject beakerInstance = Instantiate(stageDataSO.stageDatas[curStageNum].beakerPrefabs[i]);
             beakerInstance.transform.Find("Name").GetComponent<TextMeshProUGUI>().text = (i + 1).ToString();
+            if (i == beakerSetting.beakerSize.Count - 1) // 가장 마지막 비커는 이름을 Submit으로 변경
+            {
+                beakerInstance.transform.Find("Name").gameObject.SetActive(false);
+                beakerInstance.transform.Find("Submit").gameObject.SetActive(true);
+            }
             RectTransform rectTransform = beakerInstance.GetComponent<RectTransform>();
             rectTransform.SetParent(canvas_Beaker.GetComponent<RectTransform>(), false);
             if(beakerSetting.beakerSize.Count > 4)
-                beakerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-750 + i * 170, 0, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것
+            {
+                if (beakerSetting.beakerSize[i] < 24)
+                    beakerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-750 + i * 170, -350 + (beakerSetting.beakerSize[i] - 2) * 22 , 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것 / -350은 2칸짜리 비커 기준
+                else
+                    beakerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-750 + i * 170, 0, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것
+            }
             else
-                beakerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-750 + i * 200, 0, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것
+            {
+                if (beakerSetting.beakerSize[i] < 24)
+                    beakerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-750 + i * 200, -350 + (beakerSetting.beakerSize[i] - 2) * 22, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것 / -350은 2칸짜리 비커 기준
+                else
+                    beakerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-750 + i * 200, 0, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것
+            }
 
 
             beakerInstance.GetComponent<Button>().onClick.AddListener(() => BeakerSelected(beakerInstance.GetComponent<Button>()));
