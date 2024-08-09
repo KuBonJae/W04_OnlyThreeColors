@@ -40,6 +40,15 @@ public class GridManager : MonoBehaviour
             for (int j = 0; j < columns; j++)
             {
                 GameObject cell = Instantiate(cellPrefab, transform); // 객체 생성
+                #region 1차 수정 : 그림판 우클릭 삭제
+                cell.AddComponent<EventTrigger>();
+                EventTrigger.Entry clickEntry = new EventTrigger.Entry { eventID = EventTriggerType.PointerDown };
+                EventTrigger.Entry enterEntry = new EventTrigger.Entry { eventID = EventTriggerType.PointerEnter };
+                clickEntry.callback.AddListener((eventData) => OnRightClick((PointerEventData)eventData));
+                enterEntry.callback.AddListener((eventData) => OnRightClick_Drag((PointerEventData)eventData));
+                cell.GetComponent<EventTrigger>().triggers.Add(clickEntry);
+                cell.GetComponent<EventTrigger>().triggers.Add(enterEntry);
+                #endregion
                 if (cell.TryGetComponent(out TMP_InputField inputField)) //try - get
                 {
                     inputFields[i, j] = inputField;
@@ -48,6 +57,24 @@ public class GridManager : MonoBehaviour
             }
         }
     }
+
+    #region 1차 수정 : 그림판 우클릭 삭제
+    void OnRightClick(PointerEventData eventData)
+    {
+        if (eventData.button == PointerEventData.InputButton.Right) // 우클릭 시
+        {
+            eventData.pointerEnter.GetComponent<Image>().color = Color.white;
+        }
+    }
+
+    void OnRightClick_Drag(PointerEventData eventData)
+    {
+        if (Input.GetMouseButton(1)) // 우클릭 시
+        {
+            eventData.pointerEnter.GetComponent<Image>().color = Color.white;
+        }
+    }
+    #endregion
 
     void SetupTabOrder()
     {
@@ -106,8 +133,6 @@ public class GridManager : MonoBehaviour
                         EventSystem.current.SetSelectedGameObject(nextField.gameObject); // EventSystem의 선택된 게임 오브젝트 설정
                     }
                 }
-               
-                
             }
         }
     }
