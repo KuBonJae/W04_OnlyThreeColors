@@ -590,7 +590,17 @@ public class GameStageManager : MonoBehaviour
         // 스테이지 재시작
         SetStage(curStageNum);
     }
-
+    #region 2차 수정 : 되돌리기 버튼
+    public void UndoBtnClicked()
+    {
+        if(playersChoice_Temp.Count > 0) // 초기 상태일 때는 아무것도 안들어가 있을테니 들어가면 갯수 0이라 뻑남
+        {
+            // 맨 뒤에 넣어둔 플레이어 기록에서 from과 to를 반대로 뒤집어서 옮기고 맨 뒤 기록을 삭제함
+            MoveRGBToAnotherBeaker(playersChoice_Temp[playersChoice_Temp.Count - 1].Item2, playersChoice_Temp[playersChoice_Temp.Count - 1].Item1);
+            playersChoice_Temp.RemoveAt(playersChoice_Temp.Count - 1);
+        }
+    }
+    #endregion
     public void GoBackBtnClicked(Button button) // 스테이지 창으로 돌아가기 버튼과 연결
     {
         // 현재 만들어져 있는 비커 프리팹들 먼저 Destroy
