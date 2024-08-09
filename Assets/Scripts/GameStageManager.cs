@@ -137,12 +137,12 @@ public class GameStageManager : MonoBehaviour
                 //playersChoice[curStageNum].Add(new Tuple<int,int>(firstSelectedBeakerNum, secondSelectedBeakerNum));
                 playersChoice_Temp.Add(new Tuple<int,int>(firstSelectedBeakerNum, secondSelectedBeakerNum));
                 
-                MoveRGBToAnotherBeaker(firstSelectedBeakerNum, secondSelectedBeakerNum);
+                MoveRGBToAnotherBeaker(firstSelectedBeakerNum, secondSelectedBeakerNum, false);
             }
         }
 
         // 만약 남은 횟수가 0 미만이면 사망 (100번까지 가능)
-        if(curMoveCount > 100)
+        if(curMoveCount > 500)
         {
             DestoryBeakerPrefabs();
             // 해당 부분은 LateUpdate로 전달
@@ -150,7 +150,7 @@ public class GameStageManager : MonoBehaviour
         }
         //
         // 남은 횟수 ui 변경
-        ResetCountdown.GetComponent<TextMeshProUGUI>().text = "남은 횟수 : " + (maxMoveCount - curMoveCount).ToString();
+        ResetCountdown.GetComponent<TextMeshProUGUI>().text = "현재 횟수 : " + curMoveCount.ToString();
         //
 
         if(easyStageClearCount >= 3)
@@ -161,7 +161,7 @@ public class GameStageManager : MonoBehaviour
 
     private void LateUpdate()
     {
-        if(curMoveCount > 100)
+        if(curMoveCount > 500)
             StartCoroutine("ResetStage"); // 프리팹 삭제 후 강제 리스타트
     }
 
@@ -468,7 +468,7 @@ public class GameStageManager : MonoBehaviour
         }
     }
 
-    void MoveRGBToAnotherBeaker(int fromBeaker, int toBeaker)
+    void MoveRGBToAnotherBeaker(int fromBeaker, int toBeaker, bool isUndo)
     {
         if (stageBeaker.curBeakerAmount[toBeaker] < stageBeaker.beakerSize[toBeaker]) // 해당 번호의 비커가 비어있는 공간이 있을 것
         {
@@ -497,7 +497,10 @@ public class GameStageManager : MonoBehaviour
             }
 
             // 현재 움직인 카운트 추가
-            curMoveCount++;
+            if (isUndo)
+                curMoveCount--;
+            else
+                curMoveCount++;
 
             //Play Pouring SFX
             soundManager.PlayPouringSFX();
@@ -611,7 +614,7 @@ public class GameStageManager : MonoBehaviour
         if(playersChoice_Temp.Count > 0) // 초기 상태일 때는 아무것도 안들어가 있을테니 들어가면 갯수 0이라 뻑남
         {
             // 맨 뒤에 넣어둔 플레이어 기록에서 from과 to를 반대로 뒤집어서 옮기고 맨 뒤 기록을 삭제함
-            MoveRGBToAnotherBeaker(playersChoice_Temp[playersChoice_Temp.Count - 1].Item2, playersChoice_Temp[playersChoice_Temp.Count - 1].Item1);
+            MoveRGBToAnotherBeaker(playersChoice_Temp[playersChoice_Temp.Count - 1].Item2, playersChoice_Temp[playersChoice_Temp.Count - 1].Item1, true);
             playersChoice_Temp.RemoveAt(playersChoice_Temp.Count - 1);
         }
     }
