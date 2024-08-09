@@ -2169,33 +2169,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4564234094514186425, guid: 4d0c41cc64c777e4bab3d6690fe1421f, type: 3}
-      propertyPath: m_UiScaleMode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4564234094514186425, guid: 4d0c41cc64c777e4bab3d6690fe1421f, type: 3}
-      propertyPath: m_ReferenceResolution.x
-      value: 1920
-      objectReference: {fileID: 0}
-    - target: {fileID: 4564234094514186425, guid: 4d0c41cc64c777e4bab3d6690fe1421f, type: 3}
-      propertyPath: m_ReferenceResolution.y
-      value: 1200
-      objectReference: {fileID: 0}
-    - target: {fileID: 7348584875710205035, guid: 4d0c41cc64c777e4bab3d6690fe1421f, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 7348584875710205035, guid: 4d0c41cc64c777e4bab3d6690fe1421f, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 7405000931503810494, guid: 4d0c41cc64c777e4bab3d6690fe1421f, type: 3}
       propertyPath: m_Name
       value: PracticeNote
-      objectReference: {fileID: 0}
-    - target: {fileID: 7405000931503810494, guid: 4d0c41cc64c777e4bab3d6690fe1421f, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
