@@ -416,8 +416,11 @@ public class GameStageManager : MonoBehaviour
         answerInstance.transform.Find("Name").GetComponent<TextMeshProUGUI>().text = (beakerSetting.beakerSize.Count).ToString();
         answerInstance.transform.Find("Name").gameObject.SetActive(false);
         answerInstance.transform.Find("Answer").gameObject.SetActive(true);
+        // 이 부분에 정답비커의 인디케이터를 키도록 하면 될 듯
+        answerInstance.transform.Find("AnswerIndicator").gameObject.SetActive(true);
         RectTransform answerRectTransform = answerInstance.GetComponent<RectTransform>();
         answerRectTransform.SetParent(canvas_Beaker.GetComponent<RectTransform>(), false);
+        
         if (beakerSetting.beakerSize.Count > 4)
             answerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-750 + (beakerSetting.beakerSize.Count) * 170, 0, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것
         else
