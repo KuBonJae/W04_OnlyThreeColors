@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using TMPro;
+//using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -33,9 +35,11 @@ public class GameStageManager : MonoBehaviour
     // 스테이지 별 플레이어의 최고기록 풀이가 저장될 List
     public List<List<Tuple<int, int>>> playersChoice;
     List<Tuple<int, int>> playersChoice_Temp; // 최고기록과 비교할 그때그때 풀이한 List
+    List<int> moveWaterAmount; // 옮겨진 물 양 -> 되돌리기 할 때 이거 참고해서 옮겨진 물 양 만큼만 옮겨야 함
+    List<bool> stageCleared;
     //
     // 스테이지 별 플레이어의 리스타트 버튼 횟수(클리어 ui에서 선택한 리스타트 제외)
-    List<int> playersRestart = new List<int>();
+    List<int> playersRestart;
     // 스테이지 별 개발자가 제시하는 풀이 횟수
     public List<int> devAnswerCount;
     //
@@ -64,7 +68,7 @@ public class GameStageManager : MonoBehaviour
     private int easyStageClearCount = 0;
     private int normalStageClearCount = 0;
     private int hardStageClearCount = 0;
-    private List<bool> alreadyCleared = new List<bool>();
+    private List<bool> alreadyCleared;
     //
     // 다음 스테이지 버튼 오픈 여부, 이미 오픈된 상태면 굳이 다시 SetActive(true) 할 필요 없도록 -> Tut는 항시 오픈
     private bool easyStageOpened = false;
@@ -97,29 +101,83 @@ public class GameStageManager : MonoBehaviour
     // 사운드 재생을 위한 스크립트
     SoundManager soundManager;
     //
+    // 데이저 저장용 매니저
+    public DataManager dataManager;
+    //
+    //
     // 컬러 코드
     Color[] colors;
 
     void Awake()
     {
         soundManager = FindObjectOfType<SoundManager>();
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
+        dataManager = FindObjectOfType<DataManager>();
         playersChoice = new List<List<Tuple<int, int>>>();
         playersChoice_Temp = new List<Tuple<int, int>>();
-        for (int i=0;i< totalStageNum;i++) // 스테이지 갯수만큼 답지 List<Tuple> 을 생성해서 미리 넣어준다.
+        playersRestart = new List<int>();
+        stageCleared = new List<bool>();
+        alreadyCleared = new List<bool>();
+        moveWaterAmount = new List<int>();
+        for (int i = 0; i < totalStageNum; i++) // 스테이지 갯수만큼 답지 List를 생성해서 미리 넣어준다.
         {
             playersChoice.Add(new List<Tuple<int, int>>());
-        }
-        for(int i=0;i<40;i++)
-        {
+            stageCleared.Add(false);
             playersRestart.Add(0);
             alreadyCleared.Add(false);
         }
 
+        if (!File.Exists(dataManager.filePath))
+            return;
+
+        var (fromList, toList, restartList, isCleared) = dataManager.LoadData();
+        if (fromList != null && toList != null && restartList != null && isCleared != null)
+        {
+            if(fromList.Count != totalStageNum || toList.Count != totalStageNum || restartList.Count != totalStageNum || isCleared.Count != totalStageNum)
+            {
+                Debug.Log("세이브 데이터 오류");
+                return;
+            }
+            
+            for (int i = 0; i < totalStageNum; i++)
+            {
+                for(int j = 0; j < fromList[i].Count;j++)
+                {
+                    // i 번쨰 스테이지의 j번째 플레이 턴 수 from, to 기록
+                    playersChoice[i].Add(new Tuple<int, int>(fromList[i][j], toList[i][j]));
+                }
+                playersRestart[i] = (restartList[i]);
+                stageCleared[i] = (isCleared[i]);
+                if (isCleared[i])
+                {
+                    alreadyCleared[i] = true;
+                    if (i < 10)
+                    {
+                        tutStageClearCount++;
+                        tutAnswerButtons[i].SetActive(true);
+                    }
+                    else if (i >= 10 && i < 20)
+                    {
+                        easyStageClearCount++;
+                        easyAnswerButtons[i % 10].SetActive(true);
+                    }
+                    else if (i >= 20 && i < 30)
+                    {
+                        normalStageClearCount++;
+                        normalAnswerButtons[i % 10].SetActive(true);
+                    }
+                    else if (i >= 30 && i < 40)
+                    {
+                        hardStageClearCount++;
+                        hardAnswerButtons[i % 10].SetActive(true);
+                    }
+                }
+            }
+        }
+    }
+     
+    // Start is called before the first frame update
+    void Start()
+    {
         // 컬러 추가
         colors = new Color[3];
         ColorUtility.TryParseHtmlString("#FF8888", out colors[0]);
@@ -327,22 +385,6 @@ public class GameStageManager : MonoBehaviour
     private void SetStage(int stageNum)
     {
         // 해당 스테이지 정보에 맞는 비커들을 화면에 세팅 해줘야 한다.
-        /*List<int> beakerSize;
-        List<string> beakerString;
-
-        switch (stageNum) // 각 스테이지 별 스펙을 여기에 적는다. 좀 더 깔끔하게 데이터 유지할 수 있는 방법이 있을까?
-        {
-            case 0:
-                beakerSize = new List<int>() { 11, 4, 7 };
-                beakerString = new List<string>() { "RRRRRRRRRRR" };
-                stageBeaker = new BeakerSetting(beakerSize, beakerString, "RRRRRRRRRRR");
-                break;
-            case 1:
-                beakerSize = new List<int>() { 11, 4, 7, 9 };
-                beakerString = new List<string>() { "RRRRRRRRRRR" };
-                stageBeaker = new BeakerSetting(beakerSize, beakerString, "RRRRRRRRRRR");
-                break;
-        }*/
         ResetStageParameters();
 
         stageBeaker = new BeakerSetting(stageDataSO.stageDatas[stageNum].beakerSize,
@@ -375,14 +417,14 @@ public class GameStageManager : MonoBehaviour
             if(beakerSetting.beakerSize.Count > 4)
             {
                 if (beakerSetting.beakerSize[i] < 24)
-                    beakerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-750 + i * 170, -350 + (beakerSetting.beakerSize[i] - 2) * 22 , 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것 / -350은 2칸짜리 비커 기준
+                    beakerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-750 + i * 170, -350 + ((float)beakerSetting.beakerSize[i] / 2f - 1f) * 44 , 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것 / -350은 2칸짜리 비커 기준
                 else
                     beakerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-750 + i * 170, 0, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것
             }
             else
             {
                 if (beakerSetting.beakerSize[i] < 24)
-                    beakerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-750 + i * 200, -350 + (beakerSetting.beakerSize[i] - 2) * 22, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것 / -350은 2칸짜리 비커 기준
+                    beakerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-750 + i * 200, -350 + ((float)beakerSetting.beakerSize[i] / 2f - 1f) * 44, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것 / -350은 2칸짜리 비커 기준 
                 else
                     beakerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-750 + i * 200, 0, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것
             }
@@ -422,9 +464,9 @@ public class GameStageManager : MonoBehaviour
         answerRectTransform.SetParent(canvas_Beaker.GetComponent<RectTransform>(), false);
         
         if (beakerSetting.beakerSize.Count > 4)
-            answerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-750 + (beakerSetting.beakerSize.Count) * 170, 0, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것
+            answerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-750 + ((float)beakerSetting.beakerSize.Count) * 170, 0, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것
         else
-            answerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-750 + (beakerSetting.beakerSize.Count) * 200, 0, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것
+            answerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-750 + ((float)beakerSetting.beakerSize.Count) * 200, 0, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것
 
         Stack<char> answerCharSampleStack = new Stack<char>(beakerSetting.beakerAnswer);
         int c = 0;
@@ -484,6 +526,7 @@ public class GameStageManager : MonoBehaviour
     {
         if (stageBeaker.curBeakerAmount[toBeaker] < stageBeaker.beakerSize[toBeaker]) // 해당 번호의 비커가 비어있는 공간이 있을 것
         {
+            int waterMoveAmount = 0;
             while (stageBeaker.curBeakerAmount[toBeaker] < stageBeaker.beakerSize[toBeaker] // 빈 공간이 다 채워질때까지 from 쪽에서 옮겨담음 or
                 && stageBeaker.curBeakerAmount[fromBeaker] > 0) // from쪽 비커의 현재 남은 RGB 수가 0 개가 될 때까지 진행 
             {
@@ -506,13 +549,25 @@ public class GameStageManager : MonoBehaviour
                 //
                 stageBeaker.curBeakerAmount[fromBeaker]--; // from 비커의 숫자 한개 감소
                 stageBeaker.curBeakerAmount[toBeaker]++; // to 비커의 숫자 한개 증가
+                waterMoveAmount++;
+                if(isUndo)
+                {
+                    if (waterMoveAmount == moveWaterAmount[moveWaterAmount.Count - 1])
+                        break; // 옮겨졌던 만큼이 옮겨지면 멈춘다.
+                }
             }
 
             // 현재 움직인 카운트 추가
             if (isUndo)
+            {
                 curMoveCount--;
+                moveWaterAmount.RemoveAt(moveWaterAmount.Count - 1); // 맨 뒤의 옮겨졌던 양 삭제
+            }
             else
+            {
                 curMoveCount++;
+                moveWaterAmount.Add(waterMoveAmount);
+            }
 
             //Play Pouring SFX
             soundManager.PlayPouringSFX();
@@ -556,6 +611,7 @@ public class GameStageManager : MonoBehaviour
             gameClearUI.SetActive(true);
             PracticeNote.SetActive(false);
             noticeCanvas.SetActive(false);
+            stageCleared[curStageNum] = true;
             if (curStageNum < 10 && !alreadyCleared[curStageNum]) // 튜토리얼
             {
                 tutStageClearCount++;
@@ -711,7 +767,7 @@ public class GameStageManager : MonoBehaviour
     private void ResetStageParameters()
     {
         curMoveCount = 0;
-        //playersChoice[curStageNum].Clear(); // 먼저 싹 비움
+        moveWaterAmount.Clear(); // 옮긴 카운트 삭제했으니 옮겨졌던 데이터도 물론 필요없다.
         firstBeakerSelected = false;
         firstSelectedBeakerNum = 1995;
         secondBeakerSelected = false;
@@ -721,6 +777,40 @@ public class GameStageManager : MonoBehaviour
     public void QuitBtnClicked()
     {
         Application.Quit();
+    }
+
+    public void SaveBtnClicked()
+    {
+        var (fromList, toList, restartList, clearList) = MakeListForSave();
+        dataManager.SaveData(fromList, toList, restartList, clearList);
+    }
+
+    private (List<List<int>>, List<List<int>>, List<int>, List<bool>) MakeListForSave()
+    {
+        List<List<int>> fromList = new List<List<int>>();
+        List<List<int>> toList = new List<List<int>>();
+        List<int> restartList = new List<int>();
+        List<bool> isCleared = new List<bool>();
+        // 각 리스트들에 리스트 빈거 넣어주기
+        for (int i = 0; i < totalStageNum; i++) // 스테이지 갯수만큼 답지 List를 생성해서 미리 넣어준다.
+        {
+            fromList.Add(new List<int>());
+            toList.Add(new List<int>());
+            restartList.Add(0);
+            isCleared.Add(false);
+        }
+        //
+        for (int i=0; i<totalStageNum; i++)
+        {
+            for(int j = 0; j < playersChoice[i].Count; j++)
+            {
+                fromList[i].Add(playersChoice[i][j].Item1);
+                toList[i].Add(playersChoice[i][j].Item2);
+            }
+            restartList[i] = (playersRestart[i]);
+            isCleared[i] = (stageCleared[i]);
+        }
+        return (fromList, toList, restartList, isCleared);
     }
 
     public void NoticeBtnClicked()
