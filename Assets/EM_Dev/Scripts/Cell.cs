@@ -33,6 +33,10 @@ public class Cell : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUp
     //}
     public void OnPointerDown(PointerEventData eventData)
     {
+        #region 1차 수정 : 그림판 우클릭 삭제
+        if (eventData.button == PointerEventData.InputButton.Right)
+            return; // 이쪽에서 우클릭 처리 안함
+        #endregion
         isDragging = true;
         changeColor = buttonManager.GetSelectedColor();
         changeColor.a = 1;
