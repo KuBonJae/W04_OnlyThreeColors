@@ -8,7 +8,7 @@ public class DataManager : MonoBehaviour
     public string filePath;
     private int totalStageNum = 40;
 
-    private void Awake()
+    void Awake()
     {
         filePath = Path.Combine(Application.persistentDataPath, "SaveData.json");
     }

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using TMPro;
-using Unity.VisualScripting;
+//using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -178,18 +178,6 @@ public class GameStageManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        playersChoice = new List<List<Tuple<int, int>>>();
-        playersChoice_Temp = new List<Tuple<int, int>>();
-        for (int i=0;i< totalStageNum;i++) // 스테이지 갯수만큼 답지 List<Tuple> 을 생성해서 미리 넣어준다.
-        {
-            playersChoice.Add(new List<Tuple<int, int>>());
-        }
-        for(int i=0;i<40;i++)
-        {
-            playersRestart.Add(0);
-            alreadyCleared.Add(false);
-        }
-
         // 컬러 추가
         colors = new Color[3];
         ColorUtility.TryParseHtmlString("#FF8888", out colors[0]);
