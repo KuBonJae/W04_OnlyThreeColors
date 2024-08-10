@@ -76,7 +76,7 @@ public class GameStageManager : MonoBehaviour
     private bool hardStageOpened = false;
     //
     // 현재 스테이지 번호
-    int curStageNum;
+    public int curStageNum;
     //
     // 캔버스 미리 받아두기
     [Header("UI")]
