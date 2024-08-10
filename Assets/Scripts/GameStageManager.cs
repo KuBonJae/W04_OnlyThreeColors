@@ -118,6 +118,9 @@ public class GameStageManager : MonoBehaviour
     // CurrentStageText
     [Header("Current Stage Text")]
     public TextMeshProUGUI currentStageText;
+
+    // stage reset 중에 제출 되는 버그 방지용 boolean
+    bool stageShouldBeReset = false;
     
     void Awake()
     {
@@ -153,7 +156,7 @@ public class GameStageManager : MonoBehaviour
             {
                 for(int j = 0; j < fromList[i].Count;j++)
                 {
-                    // i 번쨰 스테이지의 j번째 플레이 턴 수 from, to 기록
+                    // i 번? 스테이지의 j번째 플레이 턴 수 from, to 기록
                     playersChoice[i].Add(new Tuple<int, int>(fromList[i][j], toList[i][j]));
                 }
                 playersRestart[i] = (restartList[i]);
@@ -207,11 +210,11 @@ public class GameStageManager : MonoBehaviour
                 firstBeakerSelected = secondBeakerSelected = false;
                 EventSystem.current.SetSelectedGameObject(null); // 버튼 선택된 것 해제 << 이거 해제 안하면 같은 버튼 클릭이 연속으로 안됨
                 canvas_Beaker.transform.GetChild(firstSelectedBeakerNum).Find("Indicator").gameObject.SetActive(false);
-                if (curMoveCount == 0) // 해당 스테이지에서 처음 실행된 플레이어의 Move
-                {
-                    //playersChoice[curStageNum].Clear(); // 먼저 싹 비움 << 이제 최고기록 저장용으로 쓸거기 때문에 비우는건 절대 안됨
-                    playersChoice_Temp.Clear(); // 임시로 사용되는 플레이어 기록 List 비우기
-                }
+                //if (curMoveCount == 0) // 해당 스테이지에서 처음 실행된 플레이어의 Move
+                //{
+                //    //playersChoice[curStageNum].Clear(); // 먼저 싹 비움 << 이제 최고기록 저장용으로 쓸거기 때문에 비우는건 절대 안됨
+                //    playersChoice_Temp.Clear(); // 임시로 사용되는 플레이어 기록 List 비우기
+                //}
                 //playersChoice[curStageNum].Add(new Tuple<int,int>(firstSelectedBeakerNum, secondSelectedBeakerNum));
                 playersChoice_Temp.Add(new Tuple<int,int>(firstSelectedBeakerNum, secondSelectedBeakerNum));
                 
@@ -235,6 +238,12 @@ public class GameStageManager : MonoBehaviour
             normalBlocker.SetActive(false);
         if(normalStageClearCount >= 3)
             hardBlocker.SetActive(false);
+    }
+
+    private void FixedUpdate()
+    {
+        if(doGameUI.activeSelf && !stageShouldBeReset)
+            SubmitBtnClicked();
     }
 
     private void LateUpdate()
@@ -680,6 +689,9 @@ public class GameStageManager : MonoBehaviour
             PracticeNote.SetActive(false);
             noticeCanvas.SetActive(false);
             stageCleared[curStageNum] = true;
+
+            stageShouldBeReset = true; // 클리어 된 상태이므로 submit update가 돌아갈 이유가 없음
+
             if (curStageNum < 10 && !alreadyCleared[curStageNum]) // 튜토리얼
             {
                 tutStageClearCount++;
@@ -713,6 +725,8 @@ public class GameStageManager : MonoBehaviour
 
             // update counts in clearUI
             UpdateGameClearUI();
+
+            SaveBtnClicked();
         }
         else 
         {
@@ -787,6 +801,7 @@ public class GameStageManager : MonoBehaviour
         yield return null;
         // 스테이지 재시작
         SetStage(curStageNum);
+        stageShouldBeReset = false; // 스테이지 리셋 완료됐으면 다시 제출 update 돌아가기 시작함
     }
     #region 2차 수정 : 되돌리기 버튼
     public void UndoBtnClicked()
@@ -882,6 +897,7 @@ public class GameStageManager : MonoBehaviour
     {
         curMoveCount = 0;
         moveWaterAmount.Clear(); // 옮긴 카운트 삭제했으니 옮겨졌던 데이터도 물론 필요없다.
+        playersChoice_Temp.Clear(); // 임시로 사용되는 플레이어 기록 List 비우기
         firstBeakerSelected = false;
         firstSelectedBeakerNum = 1995;
         secondBeakerSelected = false;
