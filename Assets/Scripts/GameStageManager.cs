@@ -121,7 +121,8 @@ public class GameStageManager : MonoBehaviour
 
     // stage reset 중에 제출 되는 버그 방지용 boolean
     bool stageShouldBeReset = false;
-    
+
+    public TextMeshProUGUI tutorialText;
     void Awake()
     {
         soundManager = FindObjectOfType<SoundManager>();
@@ -461,6 +462,15 @@ public class GameStageManager : MonoBehaviour
 
     private void SetStage(int stageNum)
     {
+        if(curStageNum == 1)
+        {
+            SetTutorialTextOn(); // 튜토리얼 2 에서 텍스트 띄우기
+        }
+        if(tutorialText.gameObject.activeSelf && curStageNum != 1)
+        {
+            tutorialText.gameObject.SetActive(false); //켜져있으면 끄기
+
+        }
         // 해당 스테이지 정보에 맞는 비커들을 화면에 세팅 해줘야 한다.
         ResetStageParameters();
 
@@ -468,8 +478,13 @@ public class GameStageManager : MonoBehaviour
             stageDataSO.stageDatas[stageNum].beakerRGB, stageDataSO.stageDatas[stageNum].answerBeaker);
 
         SetBeakerUI(stageBeaker);
-    }
 
+        stageShouldBeReset = false; // 스테이지 세팅 완료됐으면 다시 제출 update 돌아가기 시작함
+    }
+    private void SetTutorialTextOn()
+    {
+        tutorialText.gameObject.SetActive(true);
+    }
     private void SetBeakerUI(BeakerSetting beakerSetting)
     {
         // 비커 사이즈에 따라 순서대로 프리팹을 불러와 위치시킴
@@ -744,7 +759,7 @@ public class GameStageManager : MonoBehaviour
         playerCountText.SetText($"내 풀이 횟수 : {playersChoice[curStageNum].Count}");
         makerCountText.SetText($"제작자 풀이 횟수 : {devAnswerCount[curStageNum]}");
 
-        if(curStageNum == 0 || curStageNum % 10 >= offsetOfLastStagebyDifficulty)
+        if(curStageNum == 1 || curStageNum % 10 >= offsetOfLastStagebyDifficulty)
         {
             nextStageButton.SetActive(false);
         }
@@ -768,7 +783,9 @@ public class GameStageManager : MonoBehaviour
             // if click next button, activate current answersheet button / increase curStagenum. 
             if(button.transform.Find("Next") != null)
             {
+                // "내 풀이" 버튼 재할당
                 SetButtonOfStagesByCurStageNum();
+                // 스테이지 번호 증가
                 IncreaseCurStageNum();
                 // 인게임에서 현재 스테이지 표시
                 SetCurrentStageText();
@@ -801,7 +818,6 @@ public class GameStageManager : MonoBehaviour
         yield return null;
         // 스테이지 재시작
         SetStage(curStageNum);
-        stageShouldBeReset = false; // 스테이지 리셋 완료됐으면 다시 제출 update 돌아가기 시작함
     }
     #region 2차 수정 : 되돌리기 버튼
     public void UndoBtnClicked()
