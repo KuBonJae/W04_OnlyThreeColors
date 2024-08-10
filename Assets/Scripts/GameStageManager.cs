@@ -123,6 +123,8 @@ public class GameStageManager : MonoBehaviour
     bool stageShouldBeReset = false;
 
     public TextMeshProUGUI tutorialText;
+    public TextMeshProUGUI LiterText;
+
     void Awake()
     {
         soundManager = FindObjectOfType<SoundManager>();
@@ -487,6 +489,7 @@ public class GameStageManager : MonoBehaviour
     }
     private void SetBeakerUI(BeakerSetting beakerSetting)
     {
+        int totalAmountOfWater = 0;
         // 비커 사이즈에 따라 순서대로 프리팹을 불러와 위치시킴
         for (int i = 0; i < beakerSetting.beakerSize.Count; i++) 
         {
@@ -544,6 +547,7 @@ public class GameStageManager : MonoBehaviour
                 count++;
             }
             beakerPrefabsOnDisplay.Add(beakerInstance); // 생성된 비커들 저장 -> 나중에 destroy 해야됨
+            totalAmountOfWater += count; // 전체 물 양 확인용
         }
         // 플레이어에게 보여줄 정답 비커 (버튼 역할 x)
         GameObject answerInstance = Instantiate(stageDataSO.stageDatas[curStageNum].beakerPrefabs[beakerSetting.beakerSize.Count - 1]); // 가장 마지막 비커는 infi 비커이므로 걍 가져와서 씀
@@ -580,6 +584,7 @@ public class GameStageManager : MonoBehaviour
             }
         }
         beakerPrefabsOnDisplay.Add(answerInstance); // 생성된 정답 비커도 저장
+        LiterText.GetComponent<TextMeshProUGUI>().text = "전체 물 양 : " + totalAmountOfWater.ToString() + " L\n정답 물 양 : " + c.ToString() + " L";
     }
 
     public void BeakerSelected(Button button) // 제출용 비커의 이름은 404 << 로 할 것

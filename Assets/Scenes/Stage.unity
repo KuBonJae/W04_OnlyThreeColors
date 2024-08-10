@@ -6131,6 +6131,7 @@ MonoBehaviour:
   offsetOfLastStagebyDifficulty: 4
   currentStageText: {fileID: 79447641}
   tutorialText: {fileID: 868941379}
+  LiterText: {fileID: 1733823935}
 --- !u!4 &541092525
 Transform:
   m_ObjectHideFlags: 0
@@ -18694,7 +18695,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
+    rgba: 4294901760
   m_fontColor: {r: 0, g: 0, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
