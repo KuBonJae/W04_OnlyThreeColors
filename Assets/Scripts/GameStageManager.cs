@@ -458,14 +458,14 @@ public class GameStageManager : MonoBehaviour
                 if (beakerSetting.beakerSize[i] < 24)
                     beakerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-750 + i * 170, -350 + ((float)beakerSetting.beakerSize[i] / 2f - 1f) * 44 , 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것 / -350은 2칸짜리 비커 기준
                 else
-                    beakerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-750 + i * 170, 0, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것
+                    beakerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-750 + i * 170, 36.3f, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것 //y36.3 으로 수정
             }
             else
             {
                 if (beakerSetting.beakerSize[i] < 24)
                     beakerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-750 + i * 200, -350 + ((float)beakerSetting.beakerSize[i] / 2f - 1f) * 44, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것 / -350은 2칸짜리 비커 기준 
                 else
-                    beakerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-750 + i * 200, 0, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것
+                    beakerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-750 + i * 200, 36.3f, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것 //y36.3 으로 수정
             }
 
 
@@ -497,12 +497,15 @@ public class GameStageManager : MonoBehaviour
         answerInstance.transform.Find("Name").GetComponent<TextMeshProUGUI>().text = (beakerSetting.beakerSize.Count).ToString();
         answerInstance.transform.Find("Name").gameObject.SetActive(false);
         answerInstance.transform.Find("Answer").gameObject.SetActive(true);
+        // 이 부분에 정답비커의 인디케이터를 키도록 하면 될 듯
+        answerInstance.transform.Find("AnswerIndicator").gameObject.SetActive(true);
         RectTransform answerRectTransform = answerInstance.GetComponent<RectTransform>();
         answerRectTransform.SetParent(canvas_Beaker.GetComponent<RectTransform>(), false);
+        
         if (beakerSetting.beakerSize.Count > 4)
-            answerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-750 + ((float)beakerSetting.beakerSize.Count) * 170, 0, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것
+            answerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-750 + ((float)beakerSetting.beakerSize.Count) * 170, 36.3f, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것
         else
-            answerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-750 + ((float)beakerSetting.beakerSize.Count) * 200, 0, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것
+            answerInstance.GetComponent<RectTransform>().localPosition = new Vector3(-750 + ((float)beakerSetting.beakerSize.Count) * 200, 36.3f, 0); // -> 로컬 위치는 Global에서 정하고 들어갈 것
 
         Stack<char> answerCharSampleStack = new Stack<char>(beakerSetting.beakerAnswer);
         int c = 0;
