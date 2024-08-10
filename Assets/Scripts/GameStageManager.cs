@@ -114,6 +114,10 @@ public class GameStageManager : MonoBehaviour
     public GameObject nextStageButton;
     public int offsetOfLastStagebyDifficulty;
     GameObject currentStageButton;
+    //
+    // CurrentStageText
+    [Header("Current Stage Text")]
+    public TextMeshProUGUI currentStageText;
     
     void Awake()
     {
@@ -245,6 +249,8 @@ public class GameStageManager : MonoBehaviour
         this.curStageNum = curStageNum;
         // 버튼 이름들로 해당 스테이지 세팅
         SetButtonOfStagesByCurStageNum();
+        // 인게임에서 현재 스테이지 표시
+        SetCurrentStageText();
         // 스테이지 캔버스 종료 및 게임 캔버스 ON
         selectStageUI.SetActive(false);
         doGameUI.SetActive(true);
@@ -252,6 +258,30 @@ public class GameStageManager : MonoBehaviour
         SetStage(curStageNum);
     }
 
+    void SetCurrentStageText()
+    {
+        string stageText;
+        if (curStageNum < 10) // tutorial
+        {
+            stageText = "Tutorial";
+        }
+        else if (curStageNum < 20) // easy
+        {
+            stageText = "Easy";
+        }
+        else if (curStageNum < 30) // normal
+        {
+            stageText = "Normal";
+        }
+        else // hard
+        {
+            stageText = "Hard";
+        }
+
+        currentStageText.SetText($"{stageText} - {curStageNum % 10 + 1}");
+    }
+
+    // set button and currentStageText
     private void SetButtonOfStagesByCurStageNum()
     {
         int buttonNum;
@@ -278,7 +308,6 @@ public class GameStageManager : MonoBehaviour
         }
 
         AnswerSheetBtn = buttonToSet;
-
 
         //switch (curStageNum)
         //{
@@ -727,6 +756,8 @@ public class GameStageManager : MonoBehaviour
             {
                 SetButtonOfStagesByCurStageNum();
                 IncreaseCurStageNum();
+                // 인게임에서 현재 스테이지 표시
+                SetCurrentStageText();
             }
             AnswerSheetBtn.SetActive(true);
         }
