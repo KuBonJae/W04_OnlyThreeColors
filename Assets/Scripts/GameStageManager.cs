@@ -76,7 +76,7 @@ public class GameStageManager : MonoBehaviour
     private bool hardStageOpened = false;
     //
     // 현재 스테이지 번호
-    int curStageNum;
+    public int curStageNum;
     //
     // 캔버스 미리 받아두기
     [Header("UI")]
@@ -91,6 +91,7 @@ public class GameStageManager : MonoBehaviour
     public GameObject AnswerPanel;
     public GameObject PracticeNote;
     public GameObject noticeCanvas;
+    public GameObject TextsInGameClear;
     //
     // 현재 생성 되어 있는 비커 프리팹들 보관
     private List<GameObject> beakerPrefabsOnDisplay = new List<GameObject>();
@@ -107,7 +108,20 @@ public class GameStageManager : MonoBehaviour
     //
     // 컬러 코드
     Color[] colors;
+    //
+    // for Next Stage button
+    [Header("About Next Stage Button")]
+    public GameObject nextStageButton;
+    public int offsetOfLastStagebyDifficulty;
+    GameObject currentStageButton;
+    //
+    // CurrentStageText
+    [Header("Current Stage Text")]
+    public TextMeshProUGUI currentStageText;
 
+    // stage reset 중에 제출 되는 버그 방지용 boolean
+    bool stageShouldBeReset = false;
+    
     void Awake()
     {
         soundManager = FindObjectOfType<SoundManager>();
@@ -142,7 +156,7 @@ public class GameStageManager : MonoBehaviour
             {
                 for(int j = 0; j < fromList[i].Count;j++)
                 {
-                    // i 번쨰 스테이지의 j번째 플레이 턴 수 from, to 기록
+                    // i 번? 스테이지의 j번째 플레이 턴 수 from, to 기록
                     playersChoice[i].Add(new Tuple<int, int>(fromList[i][j], toList[i][j]));
                 }
                 playersRestart[i] = (restartList[i]);
@@ -196,11 +210,11 @@ public class GameStageManager : MonoBehaviour
                 firstBeakerSelected = secondBeakerSelected = false;
                 EventSystem.current.SetSelectedGameObject(null); // 버튼 선택된 것 해제 << 이거 해제 안하면 같은 버튼 클릭이 연속으로 안됨
                 canvas_Beaker.transform.GetChild(firstSelectedBeakerNum).Find("Indicator").gameObject.SetActive(false);
-                if (curMoveCount == 0) // 해당 스테이지에서 처음 실행된 플레이어의 Move
-                {
-                    //playersChoice[curStageNum].Clear(); // 먼저 싹 비움 << 이제 최고기록 저장용으로 쓸거기 때문에 비우는건 절대 안됨
-                    playersChoice_Temp.Clear(); // 임시로 사용되는 플레이어 기록 List 비우기
-                }
+                //if (curMoveCount == 0) // 해당 스테이지에서 처음 실행된 플레이어의 Move
+                //{
+                //    //playersChoice[curStageNum].Clear(); // 먼저 싹 비움 << 이제 최고기록 저장용으로 쓸거기 때문에 비우는건 절대 안됨
+                //    playersChoice_Temp.Clear(); // 임시로 사용되는 플레이어 기록 List 비우기
+                //}
                 //playersChoice[curStageNum].Add(new Tuple<int,int>(firstSelectedBeakerNum, secondSelectedBeakerNum));
                 playersChoice_Temp.Add(new Tuple<int,int>(firstSelectedBeakerNum, secondSelectedBeakerNum));
                 
@@ -226,6 +240,12 @@ public class GameStageManager : MonoBehaviour
             hardBlocker.SetActive(false);
     }
 
+    private void FixedUpdate()
+    {
+        if(doGameUI.activeSelf && !stageShouldBeReset)
+            SubmitBtnClicked();
+    }
+
     private void LateUpdate()
     {
         if(curMoveCount > 500)
@@ -233,153 +253,210 @@ public class GameStageManager : MonoBehaviour
     }
 
     // 스테이지 버튼 클릭 시 발생하는 함수
-    public void StageBtnClicked(Button button)
+    public void StageBtnClicked(int curStageNum)
     {
+        this.curStageNum = curStageNum;
         // 버튼 이름들로 해당 스테이지 세팅
-        switch (button.gameObject.name)
-        {
-            #region 튜토리얼
-            case "Tutorial1": // 스테이지 버튼 이름으로 세팅하긴 하는데 다른 좋은 방식 추천받습니다.
-                curStageNum = 0;
-                AnswerSheetBtn = tutAnswerButtons[curStageNum];
-                break;
-            case "Tutorial2":
-                curStageNum = 1;
-                AnswerSheetBtn = tutAnswerButtons[curStageNum];
-                break;
-            #endregion
-            #region 이지 모드
-            case "Easy1":
-                curStageNum = 10;
-                AnswerSheetBtn = easyAnswerButtons[curStageNum - 10];
-                break;
-            case "Easy2":
-                curStageNum = 11;
-                AnswerSheetBtn = easyAnswerButtons[curStageNum - 10];
-                break;
-            case "Easy3":
-                curStageNum = 12;
-                AnswerSheetBtn = easyAnswerButtons[curStageNum - 10];
-                break;
-            case "Easy4":
-                curStageNum = 13;
-                AnswerSheetBtn = easyAnswerButtons[curStageNum - 10];
-                break;
-            case "Easy5":
-                curStageNum = 14;
-                AnswerSheetBtn = easyAnswerButtons[curStageNum - 10];
-                break;
-            case "Easy6":
-                curStageNum = 15;
-                AnswerSheetBtn = easyAnswerButtons[curStageNum - 10];
-                break;
-            case "Easy7":
-                curStageNum = 16;
-                AnswerSheetBtn = easyAnswerButtons[curStageNum - 10];
-                break;
-            case "Easy8":
-                curStageNum = 17;
-                AnswerSheetBtn = easyAnswerButtons[curStageNum - 10];
-                break;
-            case "Easy9":
-                curStageNum = 18;
-                AnswerSheetBtn = easyAnswerButtons[curStageNum - 10];
-                break;
-            case "Easy10":
-                curStageNum = 19;
-                AnswerSheetBtn = easyAnswerButtons[curStageNum - 10];
-                break;
-            #endregion
-            #region 미디움 모드
-            case "Mid1":
-                curStageNum = 20;
-                AnswerSheetBtn = normalAnswerButtons[curStageNum - 20];
-                break;
-            case "Mid2":
-                curStageNum = 21;
-                AnswerSheetBtn = normalAnswerButtons[curStageNum - 20];
-                break;
-            case "Mid3":
-                curStageNum = 22;
-                AnswerSheetBtn = normalAnswerButtons[curStageNum - 20];
-                break;
-            case "Mid4":
-                curStageNum = 23;
-                AnswerSheetBtn = normalAnswerButtons[curStageNum - 20];
-                break;
-            case "Mid5":
-                curStageNum = 24;
-                AnswerSheetBtn = normalAnswerButtons[curStageNum - 20];
-                break;
-            case "Mid6":
-                curStageNum = 25;
-                AnswerSheetBtn = normalAnswerButtons[curStageNum - 20];
-                break;
-            case "Mid7":
-                curStageNum = 26;
-                AnswerSheetBtn = normalAnswerButtons[curStageNum - 20];
-                break;
-            case "Mid8":
-                curStageNum = 27;
-                AnswerSheetBtn = normalAnswerButtons[curStageNum - 20];
-                break;
-            case "Mid9":
-                curStageNum = 28;
-                AnswerSheetBtn = normalAnswerButtons[curStageNum - 20];
-                break;
-            case "Mid10":
-                curStageNum = 29;
-                AnswerSheetBtn = normalAnswerButtons[curStageNum - 20];
-                break;
-            #endregion
-            #region 하드 모드
-            case "Hard1":
-                curStageNum = 30;
-                AnswerSheetBtn = hardAnswerButtons[curStageNum - 30];
-                break;
-            case "Hard2":
-                curStageNum = 31;
-                AnswerSheetBtn = hardAnswerButtons[curStageNum - 30];
-                break;
-            case "Hard3":
-                curStageNum = 32;
-                AnswerSheetBtn = hardAnswerButtons[curStageNum - 30];
-                break;
-            case "Hard4":
-                curStageNum = 33;
-                AnswerSheetBtn = hardAnswerButtons[curStageNum - 30];
-                break;
-            case "Hard5":
-                curStageNum = 34;
-                AnswerSheetBtn = hardAnswerButtons[curStageNum - 30];
-                break;
-            case "Hard6":
-                curStageNum = 35;
-                AnswerSheetBtn = hardAnswerButtons[curStageNum - 30];
-                break;
-            case "Hard7":
-                curStageNum = 36;
-                AnswerSheetBtn = hardAnswerButtons[curStageNum - 30];
-                break;
-            case "Hard8":
-                curStageNum = 37;
-                AnswerSheetBtn = hardAnswerButtons[curStageNum - 30];
-                break;
-            case "Hard9":
-                curStageNum = 38;
-                AnswerSheetBtn = hardAnswerButtons[curStageNum - 30];
-                break;
-            case "Hard10":
-                curStageNum = 39;
-                AnswerSheetBtn = hardAnswerButtons[curStageNum - 30];
-                break;
-                #endregion
-        }
+        SetButtonOfStagesByCurStageNum();
+        // 인게임에서 현재 스테이지 표시
+        SetCurrentStageText();
         // 스테이지 캔버스 종료 및 게임 캔버스 ON
         selectStageUI.SetActive(false);
         doGameUI.SetActive(true);
         // 비커 세팅 함수
         SetStage(curStageNum);
+    }
+
+    void SetCurrentStageText()
+    {
+        string stageText;
+        if (curStageNum < 10) // tutorial
+        {
+            stageText = "Tutorial";
+        }
+        else if (curStageNum < 20) // easy
+        {
+            stageText = "Easy";
+        }
+        else if (curStageNum < 30) // normal
+        {
+            stageText = "Normal";
+        }
+        else // hard
+        {
+            stageText = "Hard";
+        }
+
+        currentStageText.SetText($"{stageText} - {curStageNum % 10 + 1}");
+    }
+
+    // set button and currentStageText
+    private void SetButtonOfStagesByCurStageNum()
+    {
+        int buttonNum;
+        GameObject buttonToSet;
+        if(curStageNum < 10) // tutorial
+        {
+            buttonNum = curStageNum;
+            buttonToSet = tutAnswerButtons[buttonNum];
+        }
+        else if(curStageNum < 20) // easy
+        {
+            buttonNum = curStageNum - 10;
+            buttonToSet = easyAnswerButtons[buttonNum];
+        }
+        else if(curStageNum < 30) // normal
+        {
+            buttonNum = curStageNum - 20;
+            buttonToSet = normalAnswerButtons[buttonNum];
+        }
+        else // hard
+        {
+            buttonNum = curStageNum - 30;
+            buttonToSet = hardAnswerButtons[buttonNum];
+        }
+
+        AnswerSheetBtn = buttonToSet;
+
+        //switch (curStageNum)
+        //{
+        //    #region 튜토리얼
+        //    case 0: // 스테이지 버튼 이름으로 세팅하긴 하는데 다른 좋은 방식 추천받습니다.
+        //        curStageNum = 0;
+        //        AnswerSheetBtn = tutAnswerButtons[curStageNum];
+        //        break;
+        //    case "Tutorial2":
+        //        curStageNum = 1;
+        //        AnswerSheetBtn = tutAnswerButtons[curStageNum];
+        //        break;
+        //    #endregion
+        //    #region 이지 모드
+        //    case "Easy1":
+        //        curStageNum = 10;
+        //        AnswerSheetBtn = easyAnswerButtons[curStageNum - 10];
+        //        break;
+        //    case "Easy2":
+        //        curStageNum = 11;
+        //        AnswerSheetBtn = easyAnswerButtons[curStageNum - 10];
+        //        break;
+        //    case "Easy3":
+        //        curStageNum = 12;
+        //        AnswerSheetBtn = easyAnswerButtons[curStageNum - 10];
+        //        break;
+        //    case "Easy4":
+        //        curStageNum = 13;
+        //        AnswerSheetBtn = easyAnswerButtons[curStageNum - 10];
+        //        break;
+        //    case "Easy5":
+        //        curStageNum = 14;
+        //        AnswerSheetBtn = easyAnswerButtons[curStageNum - 10];
+        //        break;
+        //    case "Easy6":
+        //        curStageNum = 15;
+        //        AnswerSheetBtn = easyAnswerButtons[curStageNum - 10];
+        //        break;
+        //    case "Easy7":
+        //        curStageNum = 16;
+        //        AnswerSheetBtn = easyAnswerButtons[curStageNum - 10];
+        //        break;
+        //    case "Easy8":
+        //        curStageNum = 17;
+        //        AnswerSheetBtn = easyAnswerButtons[curStageNum - 10];
+        //        break;
+        //    case "Easy9":
+        //        curStageNum = 18;
+        //        AnswerSheetBtn = easyAnswerButtons[curStageNum - 10];
+        //        break;
+        //    case "Easy10":
+        //        curStageNum = 19;
+        //        AnswerSheetBtn = easyAnswerButtons[curStageNum - 10];
+        //        break;
+        //    #endregion
+        //    #region 미디움 모드
+        //    case "Mid1":
+        //        curStageNum = 20;
+        //        AnswerSheetBtn = normalAnswerButtons[curStageNum - 20];
+        //        break;
+        //    case "Mid2":
+        //        curStageNum = 21;
+        //        AnswerSheetBtn = normalAnswerButtons[curStageNum - 20];
+        //        break;
+        //    case "Mid3":
+        //        curStageNum = 22;
+        //        AnswerSheetBtn = normalAnswerButtons[curStageNum - 20];
+        //        break;
+        //    case "Mid4":
+        //        curStageNum = 23;
+        //        AnswerSheetBtn = normalAnswerButtons[curStageNum - 20];
+        //        break;
+        //    case "Mid5":
+        //        curStageNum = 24;
+        //        AnswerSheetBtn = normalAnswerButtons[curStageNum - 20];
+        //        break;
+        //    case "Mid6":
+        //        curStageNum = 25;
+        //        AnswerSheetBtn = normalAnswerButtons[curStageNum - 20];
+        //        break;
+        //    case "Mid7":
+        //        curStageNum = 26;
+        //        AnswerSheetBtn = normalAnswerButtons[curStageNum - 20];
+        //        break;
+        //    case "Mid8":
+        //        curStageNum = 27;
+        //        AnswerSheetBtn = normalAnswerButtons[curStageNum - 20];
+        //        break;
+        //    case "Mid9":
+        //        curStageNum = 28;
+        //        AnswerSheetBtn = normalAnswerButtons[curStageNum - 20];
+        //        break;
+        //    case "Mid10":
+        //        curStageNum = 29;
+        //        AnswerSheetBtn = normalAnswerButtons[curStageNum - 20];
+        //        break;
+        //    #endregion
+        //    #region 하드 모드
+        //    case "Hard1":
+        //        curStageNum = 30;
+        //        AnswerSheetBtn = hardAnswerButtons[curStageNum - 30];
+        //        break;
+        //    case "Hard2":
+        //        curStageNum = 31;
+        //        AnswerSheetBtn = hardAnswerButtons[curStageNum - 30];
+        //        break;
+        //    case "Hard3":
+        //        curStageNum = 32;
+        //        AnswerSheetBtn = hardAnswerButtons[curStageNum - 30];
+        //        break;
+        //    case "Hard4":
+        //        curStageNum = 33;
+        //        AnswerSheetBtn = hardAnswerButtons[curStageNum - 30];
+        //        break;
+        //    case "Hard5":
+        //        curStageNum = 34;
+        //        AnswerSheetBtn = hardAnswerButtons[curStageNum - 30];
+        //        break;
+        //    case "Hard6":
+        //        curStageNum = 35;
+        //        AnswerSheetBtn = hardAnswerButtons[curStageNum - 30];
+        //        break;
+        //    case "Hard7":
+        //        curStageNum = 36;
+        //        AnswerSheetBtn = hardAnswerButtons[curStageNum - 30];
+        //        break;
+        //    case "Hard8":
+        //        curStageNum = 37;
+        //        AnswerSheetBtn = hardAnswerButtons[curStageNum - 30];
+        //        break;
+        //    case "Hard9":
+        //        curStageNum = 38;
+        //        AnswerSheetBtn = hardAnswerButtons[curStageNum - 30];
+        //        break;
+        //    case "Hard10":
+        //        curStageNum = 39;
+        //        AnswerSheetBtn = hardAnswerButtons[curStageNum - 30];
+        //        break;
+        //        #endregion
+        //}
     }
 
     private void SetStage(int stageNum)
@@ -612,6 +689,9 @@ public class GameStageManager : MonoBehaviour
             PracticeNote.SetActive(false);
             noticeCanvas.SetActive(false);
             stageCleared[curStageNum] = true;
+
+            stageShouldBeReset = true; // 클리어 된 상태이므로 submit update가 돌아갈 이유가 없음
+
             if (curStageNum < 10 && !alreadyCleared[curStageNum]) // 튜토리얼
             {
                 tutStageClearCount++;
@@ -642,7 +722,11 @@ public class GameStageManager : MonoBehaviour
             {
                 playersChoice[curStageNum] = new List<Tuple<int, int>>(playersChoice_Temp); // 기록이 없으면 그냥 일단 넣기
             }
-            
+
+            // update counts in clearUI
+            UpdateGameClearUI();
+
+            SaveBtnClicked();
         }
         else 
         {
@@ -650,6 +734,27 @@ public class GameStageManager : MonoBehaviour
 
         }
     }
+    public void UpdateGameClearUI()
+    {
+        TextMeshProUGUI restartCountText = TextsInGameClear.transform.Find("Restart Text").GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI playerCountText = TextsInGameClear.transform.Find("PlayerCount Text").GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI makerCountText = TextsInGameClear.transform.Find("MakerCount Text").GetComponent<TextMeshProUGUI>();
+
+        restartCountText.SetText($"재시작 횟수 : {playersRestart[curStageNum]}");
+        playerCountText.SetText($"내 풀이 횟수 : {playersChoice[curStageNum].Count}");
+        makerCountText.SetText($"제작자 풀이 횟수 : {devAnswerCount[curStageNum]}");
+
+        if(curStageNum == 0 || curStageNum % 10 >= offsetOfLastStagebyDifficulty)
+        {
+            nextStageButton.SetActive(false);
+        }
+        else
+        {
+            nextStageButton.SetActive(true);
+        }
+    }
+
+
 
     public void ResetBtnClicked(Button button) // 리셋 버튼과 연결
     {
@@ -658,8 +763,16 @@ public class GameStageManager : MonoBehaviour
         if (gameClearUI.activeSelf)
             gameClearUI.SetActive(false);
         // 클리어 ui의 버튼을 눌렀다면 스테이지 클리어 했으니 갯수 답안지 버튼 오픈 및 클리어 수 추가
-        if (button.transform.Find("Clear") != null)
-        {
+        if (button.transform.Find("Clear") != null || button.transform.Find("Next") != null)
+        {            
+            // if click next button, activate current answersheet button / increase curStagenum. 
+            if(button.transform.Find("Next") != null)
+            {
+                SetButtonOfStagesByCurStageNum();
+                IncreaseCurStageNum();
+                // 인게임에서 현재 스테이지 표시
+                SetCurrentStageText();
+            }
             AnswerSheetBtn.SetActive(true);
         }
         else // 플레이 화면에서 리셋 버튼 누르면
@@ -670,11 +783,25 @@ public class GameStageManager : MonoBehaviour
         StartCoroutine("ResetStage");
     }
 
+    void IncreaseCurStageNum()
+    {
+        // not for tutorial
+        if(curStageNum % 10 >= 5)
+        {
+            curStageNum = (curStageNum/10) * 10 + 10;
+        }
+        else
+        {
+            curStageNum++;
+        }
+    }
+
     IEnumerator ResetStage()
     {
         yield return null;
         // 스테이지 재시작
         SetStage(curStageNum);
+        stageShouldBeReset = false; // 스테이지 리셋 완료됐으면 다시 제출 update 돌아가기 시작함
     }
     #region 2차 수정 : 되돌리기 버튼
     public void UndoBtnClicked()
@@ -703,11 +830,13 @@ public class GameStageManager : MonoBehaviour
         // 클리어 ui의 버튼을 눌렀다면 스테이지 클리어 했으니 갯수 답안지 버튼 오픈 및 클리어 수 추가
         if (button.transform.Find("Clear") != null)
         {
+            SetButtonOfStagesByCurStageNum();
             AnswerSheetBtn.SetActive(true);
         }
         //
         selectStageUI.SetActive(true);
     }
+
 
     public void AnswerPanelBtnClicked(Button button)
     {
@@ -768,6 +897,7 @@ public class GameStageManager : MonoBehaviour
     {
         curMoveCount = 0;
         moveWaterAmount.Clear(); // 옮긴 카운트 삭제했으니 옮겨졌던 데이터도 물론 필요없다.
+        playersChoice_Temp.Clear(); // 임시로 사용되는 플레이어 기록 List 비우기
         firstBeakerSelected = false;
         firstSelectedBeakerNum = 1995;
         secondBeakerSelected = false;

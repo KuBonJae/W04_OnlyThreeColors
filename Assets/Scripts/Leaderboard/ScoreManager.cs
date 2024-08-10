@@ -56,10 +56,45 @@ public class ScoreManager : MonoBehaviour
         }
 
         User user = new User(inputName.text, scoresByStages);
-        RestClient.Put($"https://three-colors-and-beakers-default-rtdb.firebaseio.com/Users/{user.name}.json", user.ToJson()).Then(_ =>
+
+        RestClient.Get("https://three-colors-and-beakers-default-rtdb.firebaseio.com/Users/.json").Then(response =>
         {
+            var json = JSON.Parse(response.Text);
+            print(json);
+
+            for (int i = 0; i < json.Count; i++)
+            {
+                string userName = json[i]["name"].Value;
+                var scoreOfStage = json[i]["scoresByStages"];
+                int countInDB = 0, countInLocal = 0;
+
+                for (int j = 0; j < scoreOfStage.Count; j++)
+                {
+                    if (int.Parse(scoreOfStage[j].Value) != 0)
+                    {
+                        countInDB++;
+                    }
+
+                    if ((scoresByStages[j]) != 0)
+                    {
+                        countInLocal++;
+                    }
+                }
+                
+                // if the name is already in local and clear counts in db is bigger than in local, do not store.
+                if (userName == inputName.text && countInDB > countInLocal)
+                {
+                    return;
+                }
+            }
+
+            RestClient.Put($"https://three-colors-and-beakers-default-rtdb.firebaseio.com/Users/{user.name}.json", user.ToJson()).Then(_ =>
+            {
+
+            });
 
         });
+
     }
 
     public void UpdateLeaderBoardByStage(int stageNum)
