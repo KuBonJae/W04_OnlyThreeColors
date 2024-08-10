@@ -702,7 +702,6 @@ public class GameStageManager : MonoBehaviour
             // 스테이지 클리어 캔버스 SetActive(true)
             gameClearUI.SetActive(true);
             PracticeNote.SetActive(false);
-            noticeCanvas.SetActive(false);
             stageCleared[curStageNum] = true;
 
             stageShouldBeReset = true; // 클리어 된 상태이므로 submit update가 돌아갈 이유가 없음
@@ -840,7 +839,6 @@ public class GameStageManager : MonoBehaviour
         if (doGameUI.activeSelf)
         {
             PracticeNote.SetActive(false);
-            noticeCanvas.SetActive(false);
             doGameUI.SetActive(false);
         }
         // 클리어 ui의 버튼을 눌렀다면 스테이지 클리어 했으니 갯수 답안지 버튼 오픈 및 클리어 수 추가
@@ -962,5 +960,6 @@ public class GameStageManager : MonoBehaviour
     public void NoticeBtnClicked()
     {
         noticeCanvas.SetActive(!noticeCanvas.activeInHierarchy);
+        Debug.Log("Clicked");
     }
 }
