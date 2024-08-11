@@ -125,6 +125,9 @@ public class GameStageManager : MonoBehaviour
     public TextMeshProUGUI tutorialText;
     public TextMeshProUGUI LiterText;
 
+    // 미리보기로 옮겨지기 전 first와 second 버튼의 물의 양
+    int waterInFirstBtn;
+
     void Awake()
     {
         soundManager = FindObjectOfType<SoundManager>();
@@ -213,15 +216,11 @@ public class GameStageManager : MonoBehaviour
                 firstBeakerSelected = secondBeakerSelected = false;
                 EventSystem.current.SetSelectedGameObject(null); // 버튼 선택된 것 해제 << 이거 해제 안하면 같은 버튼 클릭이 연속으로 안됨
                 canvas_Beaker.transform.GetChild(firstSelectedBeakerNum).Find("Indicator").gameObject.SetActive(false);
-                //if (curMoveCount == 0) // 해당 스테이지에서 처음 실행된 플레이어의 Move
-                //{
-                //    //playersChoice[curStageNum].Clear(); // 먼저 싹 비움 << 이제 최고기록 저장용으로 쓸거기 때문에 비우는건 절대 안됨
-                //    playersChoice_Temp.Clear(); // 임시로 사용되는 플레이어 기록 List 비우기
-                //}
-                //playersChoice[curStageNum].Add(new Tuple<int,int>(firstSelectedBeakerNum, secondSelectedBeakerNum));
+
                 playersChoice_Temp.Add(new Tuple<int,int>(firstSelectedBeakerNum, secondSelectedBeakerNum));
-                
-                MoveRGBToAnotherBeaker(firstSelectedBeakerNum, secondSelectedBeakerNum, false);
+
+                //MoveRGBToAnotherBeaker(firstSelectedBeakerNum, secondSelectedBeakerNum, false);
+                SetBeakersAlphaToMax();
             }
         }
 
@@ -320,7 +319,7 @@ public class GameStageManager : MonoBehaviour
         }
 
         AnswerSheetBtn = buttonToSet;
-
+        /*
         //switch (curStageNum)
         //{
         //    #region 튜토리얼
@@ -460,6 +459,7 @@ public class GameStageManager : MonoBehaviour
         //        break;
         //        #endregion
         //}
+        */
     }
 
     private void SetStage(int stageNum)
@@ -501,6 +501,15 @@ public class GameStageManager : MonoBehaviour
 
             // 해당 방식으로 활용하면 될 듯
             GameObject beakerInstance = Instantiate(stageDataSO.stageDatas[curStageNum].beakerPrefabs[i]);
+            // 해당 버튼에 마우스 enter와 exit과 관련된 트리거 설치
+            beakerInstance.AddComponent<EventTrigger>();
+            EventTrigger.Entry exitEntry = new EventTrigger.Entry { eventID = EventTriggerType.PointerExit };
+            EventTrigger.Entry enterEntry = new EventTrigger.Entry { eventID = EventTriggerType.PointerEnter };
+            exitEntry.callback.AddListener((eventData) => BeakerPreviewExit((PointerEventData)eventData));
+            enterEntry.callback.AddListener((eventData) => BeakerPreviewEnter((PointerEventData)eventData));
+            beakerInstance.GetComponent<EventTrigger>().triggers.Add(enterEntry);
+            beakerInstance.GetComponent<EventTrigger>().triggers.Add(exitEntry);
+            //
             beakerInstance.transform.Find("Name").GetComponent<TextMeshProUGUI>().text = (i + 1).ToString();
             if (i == beakerSetting.beakerSize.Count - 1) // 가장 마지막 비커는 이름을 Submit으로 변경
             {
@@ -587,6 +596,36 @@ public class GameStageManager : MonoBehaviour
         LiterText.GetComponent<TextMeshProUGUI>().text = "전체 물 양 : " + totalAmountOfWater.ToString() + " L\n정답 물 양 : " + c.ToString() + " L";
     }
 
+    // 비커 버튼 위로 마우스 올리고 뺄 때 실행되는 함수 2개 추가
+    private void BeakerPreviewExit(PointerEventData eventData)
+    {
+        // 비커 프리팹이 선택됐는지 비커 프리팹 안의 image 들이 선택됐는지 체크
+        string name = eventData.pointerEnter.transform.Find("Name") == null ?
+            eventData.pointerEnter.transform.parent.Find("Name").transform.GetComponent<TextMeshProUGUI>().text : eventData.pointerEnter.transform.Find("Name").transform.GetComponent<TextMeshProUGUI>().text;
+        // 첫번째 비커가 선택되어 있고, enter 한 비커가 첫번째 비커와 다르다면
+        if (firstBeakerSelected && Convert.ToInt32(name) - 1 != firstSelectedBeakerNum)
+        { 
+            // 반대로 undo함
+            MoveRGBToAnotherBeaker(Convert.ToInt32(name) - 1, firstSelectedBeakerNum, true);
+            waterInFirstBtn = 0; // 비커가 원복됐으니 값 초기화
+        }
+    }
+
+    private void BeakerPreviewEnter(PointerEventData eventData)
+    {
+        // 비커 프리팹이 선택됐는지 비커 프리팹 안의 image 들이 선택됐는지 체크
+        string name = eventData.pointerEnter.transform.Find("Name") == null ?
+            eventData.pointerEnter.transform.parent.Find("Name").transform.GetComponent<TextMeshProUGUI>().text : eventData.pointerEnter.transform.Find("Name").transform.GetComponent<TextMeshProUGUI>().text;
+        // 첫번째 비커가 선택되어 있고, enter 한 비커가 첫번째 비커와 다르다면
+        if (firstBeakerSelected && Convert.ToInt32(name) - 1 != firstSelectedBeakerNum)
+        {
+            waterInFirstBtn = stageBeaker.curBeakerAmount[firstSelectedBeakerNum];
+            // 바로 옮겨버림
+            MoveRGBToAnotherBeaker(firstSelectedBeakerNum, Convert.ToInt32(name) - 1, false);
+        }
+    }
+    //
+
     public void BeakerSelected(Button button) // 제출용 비커의 이름은 404 << 로 할 것
     {
         if(firstBeakerSelected)
@@ -616,14 +655,37 @@ public class GameStageManager : MonoBehaviour
             // 선택 버튼의 indicator 표시
             button.transform.Find("Indicator").gameObject.SetActive(true);
             firstBeakerSelected = true;
+            EventSystem.current.SetSelectedGameObject(null); // 선택된 버튼의 focus 해제
+            EventSystem.current.firstSelectedGameObject = null;
         }
     }
+
+    // 버튼 클릭 시 알파값만 원상복귀 시켜주면 됨
+    void SetBeakersAlphaToMax()
+    {
+        GameObject firstBtn = canvas_Beaker.transform.GetChild(firstSelectedBeakerNum).gameObject;
+        GameObject secondBtn = canvas_Beaker.transform.GetChild(secondSelectedBeakerNum).gameObject;
+        Color c;
+        for(int i = 0; i < moveWaterAmount[moveWaterAmount.Count-1];i++) // 알파 값 원상복귀
+        {
+            //c = firstBtn.transform.Find("Image" + (waterInFirstBtn - i).ToString()).GetComponent<Image>().color;
+            //c.a = 1f;
+            firstBtn.transform.Find("Image" + (waterInFirstBtn - i).ToString()).GetComponent<Image>().color = Color.white;
+            c = secondBtn.transform.Find("Image" + (stageBeaker.curBeakerAmount[secondSelectedBeakerNum] - i).ToString()).GetComponent<Image>().color;
+            c.a = 1f;
+            secondBtn.transform.Find("Image" + (stageBeaker.curBeakerAmount[secondSelectedBeakerNum] - i).ToString()).GetComponent<Image>().color = c;
+        }
+        firstSelectedBeakerNum = secondSelectedBeakerNum = 1995; // 버튼 넘버 초기화
+        waterInFirstBtn = 0; // 
+    }
+    //
 
     void MoveRGBToAnotherBeaker(int fromBeaker, int toBeaker, bool isUndo)
     {
         if (stageBeaker.curBeakerAmount[toBeaker] < stageBeaker.beakerSize[toBeaker]) // 해당 번호의 비커가 비어있는 공간이 있을 것
         {
             int waterMoveAmount = 0;
+            Color color;
             while (stageBeaker.curBeakerAmount[toBeaker] < stageBeaker.beakerSize[toBeaker] // 빈 공간이 다 채워질때까지 from 쪽에서 옮겨담음 or
                 && stageBeaker.curBeakerAmount[fromBeaker] > 0) // from쪽 비커의 현재 남은 RGB 수가 0 개가 될 때까지 진행 
             {
@@ -633,16 +695,30 @@ public class GameStageManager : MonoBehaviour
                 switch (RGB)
                 {
                     case 'R':
-                        canvas_Beaker.transform.GetChild(toBeaker).Find("Image" + (stageBeaker.curBeakerAmount[toBeaker] + 1).ToString()).GetComponent<Image>().color = colors[0];
+                        color = colors[0];
+                        if(!isUndo)
+                            color.a = 0.5f;
+                        canvas_Beaker.transform.GetChild(toBeaker).Find("Image" + (stageBeaker.curBeakerAmount[toBeaker] + 1).ToString()).GetComponent<Image>().color = color;
                         break;
                     case 'G':
-                        canvas_Beaker.transform.GetChild(toBeaker).Find("Image" + (stageBeaker.curBeakerAmount[toBeaker] + 1).ToString()).GetComponent<Image>().color = colors[1];
+                        color = colors[1];
+                        if (!isUndo)
+                            color.a = 0.5f;
+                        canvas_Beaker.transform.GetChild(toBeaker).Find("Image" + (stageBeaker.curBeakerAmount[toBeaker] + 1).ToString()).GetComponent<Image>().color = color;
                         break;
                     case 'B':
-                        canvas_Beaker.transform.GetChild(toBeaker).Find("Image" + (stageBeaker.curBeakerAmount[toBeaker] + 1).ToString()).GetComponent<Image>().color = colors[2];
+                        color = colors[2];
+                        if (!isUndo)
+                            color.a = 0.5f;
+                        canvas_Beaker.transform.GetChild(toBeaker).Find("Image" + (stageBeaker.curBeakerAmount[toBeaker] + 1).ToString()).GetComponent<Image>().color = color;
                         break;
                 }
-                canvas_Beaker.transform.GetChild(fromBeaker).Find("Image" + (stageBeaker.curBeakerAmount[fromBeaker]).ToString()).GetComponent<Image>().color = Color.white;
+                color = canvas_Beaker.transform.GetChild(fromBeaker).Find("Image" + (stageBeaker.curBeakerAmount[fromBeaker]).ToString()).GetComponent<Image>().color;
+                if (!isUndo)
+                    color.a = 0.5f;
+                else
+                    color = Color.white;
+                canvas_Beaker.transform.GetChild(fromBeaker).Find("Image" + (stageBeaker.curBeakerAmount[fromBeaker]).ToString()).GetComponent<Image>().color = color;
                 //
                 stageBeaker.curBeakerAmount[fromBeaker]--; // from 비커의 숫자 한개 감소
                 stageBeaker.curBeakerAmount[toBeaker]++; // to 비커의 숫자 한개 증가
@@ -831,6 +907,12 @@ public class GameStageManager : MonoBehaviour
             // 맨 뒤에 넣어둔 플레이어 기록에서 from과 to를 반대로 뒤집어서 옮기고 맨 뒤 기록을 삭제함
             MoveRGBToAnotherBeaker(playersChoice_Temp[playersChoice_Temp.Count - 1].Item2, playersChoice_Temp[playersChoice_Temp.Count - 1].Item1, true);
             playersChoice_Temp.RemoveAt(playersChoice_Temp.Count - 1);
+            if(firstBeakerSelected)
+            {
+                firstBeakerSelected = false;
+                canvas_Beaker.transform.GetChild(firstSelectedBeakerNum).Find("Indicator").gameObject.SetActive(false);
+                firstSelectedBeakerNum = 1995;
+            }
         }
     }
     #endregion
