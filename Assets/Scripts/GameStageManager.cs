@@ -897,11 +897,10 @@ public class GameStageManager : MonoBehaviour
 
     void IncreaseCurStageNum()
     {
-        // not for tutorial
-        if(curStageNum % 10 >= 5)
-        {
-            curStageNum = (curStageNum/10) * 10 + 10;
-        }
+        // not for tutorial 각 스테이지의 마지막 이라면 다음 난이도로 변경
+        if (curStageNum == lastTutorial) curStageNum = 10;
+        else if (curStageNum == lastEasy) curStageNum = 20;
+        else if(curStageNum == lastMidium) curStageNum = 30;
         else
         {
             curStageNum++;
