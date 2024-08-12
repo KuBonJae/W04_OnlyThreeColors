@@ -687,9 +687,12 @@ public class GameStageManager : MonoBehaviour
                 secondBtn.transform.Find("Image" + (stageBeaker.curBeakerAmount[secondSelectedBeakerNum] - i).ToString()).GetComponent<Image>().color = c;
             }
         }
+        //Play Pouring SFX
+        soundManager.PlayPouringSFX();
+
         firstSelectedBeakerNum = secondSelectedBeakerNum = 1995; // 버튼 넘버 초기화
         waterInFirstBtn = 0; // 
-        isWaterMoved = false;
+        isWaterMoved = false; // 클릭해서 눌렀을 때 옮겨진 물 초기화
     }
     //
 
@@ -697,7 +700,8 @@ public class GameStageManager : MonoBehaviour
     {
         if (stageBeaker.curBeakerAmount[toBeaker] < stageBeaker.beakerSize[toBeaker]) // 해당 번호의 비커가 비어있는 공간이 있을 것
         {
-            isWaterMoved = true; // 물이 옮겨지긴 했다는 것 체크
+            if(!isUndo)
+                isWaterMoved = true; // 물이 옮겨지긴 했다는 것 체크
             int waterMoveAmount = 0;
             Color color;
             while (stageBeaker.curBeakerAmount[toBeaker] < stageBeaker.beakerSize[toBeaker] // 빈 공간이 다 채워질때까지 from 쪽에서 옮겨담음 or
@@ -755,9 +759,6 @@ public class GameStageManager : MonoBehaviour
                 curMoveCount++;
                 moveWaterAmount.Add(waterMoveAmount);
             }
-
-            //Play Pouring SFX
-            soundManager.PlayPouringSFX();
         }
         // 빈 공간이 없으면 작동 안함
     }
