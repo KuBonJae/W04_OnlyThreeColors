@@ -217,11 +217,13 @@ public class GameStageManager : MonoBehaviour
                 firstBeakerSelected = secondBeakerSelected = false;
                 EventSystem.current.SetSelectedGameObject(null); // 버튼 선택된 것 해제 << 이거 해제 안하면 같은 버튼 클릭이 연속으로 안됨
                 canvas_Beaker.transform.GetChild(firstSelectedBeakerNum).Find("Indicator").gameObject.SetActive(false);
+                if(isWaterMoved) // 물이 진짜 옮겨졌을때만 옮기는 작업을 기록한다.
+                {
+                    playersChoice_Temp.Add(new Tuple<int, int>(firstSelectedBeakerNum, secondSelectedBeakerNum));
 
-                playersChoice_Temp.Add(new Tuple<int,int>(firstSelectedBeakerNum, secondSelectedBeakerNum));
-
-                //MoveRGBToAnotherBeaker(firstSelectedBeakerNum, secondSelectedBeakerNum, false);
-                SetBeakersAlphaToMax();
+                    //MoveRGBToAnotherBeaker(firstSelectedBeakerNum, secondSelectedBeakerNum, false);
+                    SetBeakersAlphaToMax();
+                }
             }
         }
 
@@ -667,15 +669,18 @@ public class GameStageManager : MonoBehaviour
     {
         GameObject firstBtn = canvas_Beaker.transform.GetChild(firstSelectedBeakerNum).gameObject;
         GameObject secondBtn = canvas_Beaker.transform.GetChild(secondSelectedBeakerNum).gameObject;
-        Color c;
-        for(int i = 0; i < moveWaterAmount[moveWaterAmount.Count-1];i++) // 알파 값 원상복귀
+        if(isWaterMoved)
         {
-            //c = firstBtn.transform.Find("Image" + (waterInFirstBtn - i).ToString()).GetComponent<Image>().color;
-            //c.a = 1f;
-            firstBtn.transform.Find("Image" + (waterInFirstBtn - i).ToString()).GetComponent<Image>().color = Color.white;
-            c = secondBtn.transform.Find("Image" + (stageBeaker.curBeakerAmount[secondSelectedBeakerNum] - i).ToString()).GetComponent<Image>().color;
-            c.a = 1f;
-            secondBtn.transform.Find("Image" + (stageBeaker.curBeakerAmount[secondSelectedBeakerNum] - i).ToString()).GetComponent<Image>().color = c;
+            Color c;
+            for (int i = 0; i < moveWaterAmount[moveWaterAmount.Count - 1]; i++) // 알파 값 원상복귀
+            {
+                //c = firstBtn.transform.Find("Image" + (waterInFirstBtn - i).ToString()).GetComponent<Image>().color;
+                //c.a = 1f;
+                firstBtn.transform.Find("Image" + (waterInFirstBtn - i).ToString()).GetComponent<Image>().color = Color.white;
+                c = secondBtn.transform.Find("Image" + (stageBeaker.curBeakerAmount[secondSelectedBeakerNum] - i).ToString()).GetComponent<Image>().color;
+                c.a = 1f;
+                secondBtn.transform.Find("Image" + (stageBeaker.curBeakerAmount[secondSelectedBeakerNum] - i).ToString()).GetComponent<Image>().color = c;
+            }
         }
         firstSelectedBeakerNum = secondSelectedBeakerNum = 1995; // 버튼 넘버 초기화
         waterInFirstBtn = 0; // 
