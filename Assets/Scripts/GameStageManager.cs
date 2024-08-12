@@ -113,6 +113,11 @@ public class GameStageManager : MonoBehaviour
     [Header("About Next Stage Button")]
     public GameObject nextStageButton;
     public int offsetOfLastStagebyDifficulty;
+    //스테이지 다를 경우를 대비한 추가
+    public int lastTutorial;
+    public int lastEasy;
+    public int lastMidium;
+    public int lastHard;
     GameObject currentStageButton;
     //
     // CurrentStageText
@@ -848,7 +853,8 @@ public class GameStageManager : MonoBehaviour
         playerCountText.SetText($"내 풀이 횟수 : {playersChoice[curStageNum].Count}");
         makerCountText.SetText($"제작자 풀이 횟수 : {devAnswerCount[curStageNum]}");
 
-        if(curStageNum == 1 || curStageNum % 10 >= offsetOfLastStagebyDifficulty)
+        //문제 수 다를 경우를 위해 난이도별 체크
+        if (curStageNum == lastTutorial|| curStageNum == lastEasy || curStageNum == lastMidium|| curStageNum == lastHard)
         {
             nextStageButton.SetActive(false);
         }
