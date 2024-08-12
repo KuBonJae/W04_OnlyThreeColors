@@ -13,14 +13,14 @@ MonoBehaviour:
   m_Name: StageDatas
   m_EditorClassIdentifier: Assembly-CSharp::StageDataSO
   stageDatas:
-  - <beakerSize>k__BackingField: 0c000000070000000400000094010000
+  - <beakerSize>k__BackingField: 030000000200000094010000
     <beakerRGB>k__BackingField:
-    - BBBGGGGRRRRR
-    <answerBeaker>k__BackingField: BBBGGGGRRRRR
+    - RGB
+    - BG
+    <answerBeaker>k__BackingField: BGRGB
     <beakerPrefabs>k__BackingField:
-    - {fileID: 5409052935261004982, guid: 3103cf4705b6d8846846e85ace8f8d3b, type: 3}
-    - {fileID: 5409052935261004982, guid: 9570c3d1622e643458417781832cdff1, type: 3}
-    - {fileID: 5409052935261004982, guid: b335de34d3c447b47b447d47bc92529b, type: 3}
+    - {fileID: 5409052935261004982, guid: 3873ac3ff43de8e4caf1b0ca7d6e3e28, type: 3}
+    - {fileID: 5409052935261004982, guid: 3041d88632b7b6044a19fb6b5e381c5e, type: 3}
     - {fileID: 5409052935261004982, guid: add96725a6106cb47854e49029738113, type: 3}
   - <beakerSize>k__BackingField: 070000000500000094010000
     <beakerRGB>k__BackingField:
@@ -33,8 +33,7 @@ MonoBehaviour:
   - <beakerSize>k__BackingField: 030000000200000094010000
     <beakerRGB>k__BackingField:
     - RGB
-    - BG
-    <answerBeaker>k__BackingField: BGRGB
+    <answerBeaker>k__BackingField: RBG
     <beakerPrefabs>k__BackingField:
     - {fileID: 5409052935261004982, guid: 3873ac3ff43de8e4caf1b0ca7d6e3e28, type: 3}
     - {fileID: 5409052935261004982, guid: 3041d88632b7b6044a19fb6b5e381c5e, type: 3}
@@ -100,41 +99,31 @@ MonoBehaviour:
     - {fileID: 5409052935261004982, guid: 9570c3d1622e643458417781832cdff1, type: 3}
     - {fileID: 5409052935261004982, guid: b335de34d3c447b47b447d47bc92529b, type: 3}
     - {fileID: 5409052935261004982, guid: add96725a6106cb47854e49029738113, type: 3}
-  - <beakerSize>k__BackingField: 06000000030000000200000094010000
+  - <beakerSize>k__BackingField: 050000000200000094010000
     <beakerRGB>k__BackingField:
-    - GBRRBG
-    <answerBeaker>k__BackingField: BBGGRR
+    - BGRRG
+    <answerBeaker>k__BackingField: BGGRR
     <beakerPrefabs>k__BackingField:
-    - {fileID: 5409052935261004982, guid: e9ffdeb679ac8da48b853df132ed7e00, type: 3}
-    - {fileID: 5409052935261004982, guid: 3873ac3ff43de8e4caf1b0ca7d6e3e28, type: 3}
+    - {fileID: 5409052935261004982, guid: 0a7ca2365bd82274f99582dbe8828051, type: 3}
     - {fileID: 5409052935261004982, guid: 3041d88632b7b6044a19fb6b5e381c5e, type: 3}
     - {fileID: 5409052935261004982, guid: add96725a6106cb47854e49029738113, type: 3}
-  - <beakerSize>k__BackingField: 06000000030000000200000094010000
+  - <beakerSize>k__BackingField: 06000000050000000300000094010000
     <beakerRGB>k__BackingField:
     - BBGGRR
-    <answerBeaker>k__BackingField: BGRRGB
+    <answerBeaker>k__BackingField: BGR
     <beakerPrefabs>k__BackingField:
     - {fileID: 5409052935261004982, guid: e9ffdeb679ac8da48b853df132ed7e00, type: 3}
+    - {fileID: 5409052935261004982, guid: 0a7ca2365bd82274f99582dbe8828051, type: 3}
     - {fileID: 5409052935261004982, guid: 3873ac3ff43de8e4caf1b0ca7d6e3e28, type: 3}
-    - {fileID: 5409052935261004982, guid: 3041d88632b7b6044a19fb6b5e381c5e, type: 3}
     - {fileID: 5409052935261004982, guid: add96725a6106cb47854e49029738113, type: 3}
-  - <beakerSize>k__BackingField: 06000000030000000200000094010000
+  - <beakerSize>k__BackingField: 0c000000070000000400000094010000
     <beakerRGB>k__BackingField:
-    - BGRRGB
-    <answerBeaker>k__BackingField: BBGGRR
+    - GGGGBBBRRRRR
+    <answerBeaker>k__BackingField: BBBGGGGRRRRR
     <beakerPrefabs>k__BackingField:
-    - {fileID: 5409052935261004982, guid: e9ffdeb679ac8da48b853df132ed7e00, type: 3}
-    - {fileID: 5409052935261004982, guid: 3873ac3ff43de8e4caf1b0ca7d6e3e28, type: 3}
-    - {fileID: 5409052935261004982, guid: 3041d88632b7b6044a19fb6b5e381c5e, type: 3}
-    - {fileID: 5409052935261004982, guid: add96725a6106cb47854e49029738113, type: 3}
-  - <beakerSize>k__BackingField: 06000000030000000200000094010000
-    <beakerRGB>k__BackingField:
-    - BBGGRR
-    <answerBeaker>k__BackingField: GBRRBG
-    <beakerPrefabs>k__BackingField:
-    - {fileID: 5409052935261004982, guid: e9ffdeb679ac8da48b853df132ed7e00, type: 3}
-    - {fileID: 5409052935261004982, guid: 3873ac3ff43de8e4caf1b0ca7d6e3e28, type: 3}
-    - {fileID: 5409052935261004982, guid: 3041d88632b7b6044a19fb6b5e381c5e, type: 3}
+    - {fileID: 5409052935261004982, guid: 3103cf4705b6d8846846e85ace8f8d3b, type: 3}
+    - {fileID: 5409052935261004982, guid: 9570c3d1622e643458417781832cdff1, type: 3}
+    - {fileID: 5409052935261004982, guid: b335de34d3c447b47b447d47bc92529b, type: 3}
     - {fileID: 5409052935261004982, guid: add96725a6106cb47854e49029738113, type: 3}
   - <beakerSize>k__BackingField: 06000000030000000200000094010000
     <beakerRGB>k__BackingField:
@@ -145,12 +134,22 @@ MonoBehaviour:
     - {fileID: 5409052935261004982, guid: 3873ac3ff43de8e4caf1b0ca7d6e3e28, type: 3}
     - {fileID: 5409052935261004982, guid: 3041d88632b7b6044a19fb6b5e381c5e, type: 3}
     - {fileID: 5409052935261004982, guid: add96725a6106cb47854e49029738113, type: 3}
-  - <beakerSize>k__BackingField: 050000000200000094010000
+  - <beakerSize>k__BackingField: 09000000050000000300000094010000
     <beakerRGB>k__BackingField:
-    - BGRRG
-    <answerBeaker>k__BackingField: BGGRR
+    - BBBGGGRRR
+    <answerBeaker>k__BackingField: BBGGRR
     <beakerPrefabs>k__BackingField:
+    - {fileID: 5409052935261004982, guid: 26bdaeba2d0bbff488bfa3c512698c7c, type: 3}
     - {fileID: 5409052935261004982, guid: 0a7ca2365bd82274f99582dbe8828051, type: 3}
+    - {fileID: 5409052935261004982, guid: 3873ac3ff43de8e4caf1b0ca7d6e3e28, type: 3}
+    - {fileID: 5409052935261004982, guid: add96725a6106cb47854e49029738113, type: 3}
+  - <beakerSize>k__BackingField: 06000000030000000200000094010000
+    <beakerRGB>k__BackingField:
+    - GBRRBG
+    <answerBeaker>k__BackingField: BBGGRR
+    <beakerPrefabs>k__BackingField:
+    - {fileID: 5409052935261004982, guid: e9ffdeb679ac8da48b853df132ed7e00, type: 3}
+    - {fileID: 5409052935261004982, guid: 3873ac3ff43de8e4caf1b0ca7d6e3e28, type: 3}
     - {fileID: 5409052935261004982, guid: 3041d88632b7b6044a19fb6b5e381c5e, type: 3}
     - {fileID: 5409052935261004982, guid: add96725a6106cb47854e49029738113, type: 3}
   - <beakerSize>k__BackingField: 06000000030000000200000094010000
@@ -198,33 +197,6 @@ MonoBehaviour:
     - {fileID: 5409052935261004982, guid: 3873ac3ff43de8e4caf1b0ca7d6e3e28, type: 3}
     - {fileID: 5409052935261004982, guid: 3041d88632b7b6044a19fb6b5e381c5e, type: 3}
     - {fileID: 5409052935261004982, guid: add96725a6106cb47854e49029738113, type: 3}
-  - <beakerSize>k__BackingField: 09000000070000000400000094010000
-    <beakerRGB>k__BackingField:
-    - RGBRRGGBB
-    <answerBeaker>k__BackingField: BBBGGGRRR
-    <beakerPrefabs>k__BackingField:
-    - {fileID: 5409052935261004982, guid: 26bdaeba2d0bbff488bfa3c512698c7c, type: 3}
-    - {fileID: 5409052935261004982, guid: 9570c3d1622e643458417781832cdff1, type: 3}
-    - {fileID: 5409052935261004982, guid: b335de34d3c447b47b447d47bc92529b, type: 3}
-    - {fileID: 5409052935261004982, guid: add96725a6106cb47854e49029738113, type: 3}
-  - <beakerSize>k__BackingField: 0c000000070000000400000094010000
-    <beakerRGB>k__BackingField:
-    - GGGGBBBRRRRR
-    <answerBeaker>k__BackingField: BBBGGGGRRRRR
-    <beakerPrefabs>k__BackingField:
-    - {fileID: 5409052935261004982, guid: 3103cf4705b6d8846846e85ace8f8d3b, type: 3}
-    - {fileID: 5409052935261004982, guid: 9570c3d1622e643458417781832cdff1, type: 3}
-    - {fileID: 5409052935261004982, guid: b335de34d3c447b47b447d47bc92529b, type: 3}
-    - {fileID: 5409052935261004982, guid: add96725a6106cb47854e49029738113, type: 3}
-  - <beakerSize>k__BackingField: 0c000000030000000200000094010000
-    <beakerRGB>k__BackingField:
-    - BBBBGGGGRRRR
-    <answerBeaker>k__BackingField: BBBBGGGGRRRR
-    <beakerPrefabs>k__BackingField:
-    - {fileID: 5409052935261004982, guid: 3103cf4705b6d8846846e85ace8f8d3b, type: 3}
-    - {fileID: 5409052935261004982, guid: 3873ac3ff43de8e4caf1b0ca7d6e3e28, type: 3}
-    - {fileID: 5409052935261004982, guid: 3041d88632b7b6044a19fb6b5e381c5e, type: 3}
-    - {fileID: 5409052935261004982, guid: add96725a6106cb47854e49029738113, type: 3}
   - <beakerSize>k__BackingField: 07000000060000000500000094010000
     <beakerRGB>k__BackingField:
     - BBBBBB
@@ -236,50 +208,14 @@ MonoBehaviour:
     - {fileID: 5409052935261004982, guid: e9ffdeb679ac8da48b853df132ed7e00, type: 3}
     - {fileID: 5409052935261004982, guid: 0a7ca2365bd82274f99582dbe8828051, type: 3}
     - {fileID: 5409052935261004982, guid: add96725a6106cb47854e49029738113, type: 3}
-  - <beakerSize>k__BackingField: 06000000030000000200000094010000
+  - <beakerSize>k__BackingField: 0c000000030000000200000094010000
     <beakerRGB>k__BackingField:
-    - BBGGRR
-    <answerBeaker>k__BackingField: BGRBGR
+    - BBBBGGGGRRRR
+    <answerBeaker>k__BackingField: BBBBGGGGRRRR
     <beakerPrefabs>k__BackingField:
-    - {fileID: 5409052935261004982, guid: e9ffdeb679ac8da48b853df132ed7e00, type: 3}
+    - {fileID: 5409052935261004982, guid: 3103cf4705b6d8846846e85ace8f8d3b, type: 3}
     - {fileID: 5409052935261004982, guid: 3873ac3ff43de8e4caf1b0ca7d6e3e28, type: 3}
     - {fileID: 5409052935261004982, guid: 3041d88632b7b6044a19fb6b5e381c5e, type: 3}
-    - {fileID: 5409052935261004982, guid: add96725a6106cb47854e49029738113, type: 3}
-  - <beakerSize>k__BackingField: 06000000030000000200000094010000
-    <beakerRGB>k__BackingField:
-    - BBGGRR
-    <answerBeaker>k__BackingField: BGRBGR
-    <beakerPrefabs>k__BackingField:
-    - {fileID: 5409052935261004982, guid: e9ffdeb679ac8da48b853df132ed7e00, type: 3}
-    - {fileID: 5409052935261004982, guid: 3873ac3ff43de8e4caf1b0ca7d6e3e28, type: 3}
-    - {fileID: 5409052935261004982, guid: 3041d88632b7b6044a19fb6b5e381c5e, type: 3}
-    - {fileID: 5409052935261004982, guid: add96725a6106cb47854e49029738113, type: 3}
-  - <beakerSize>k__BackingField: 0c000000070000000400000094010000
-    <beakerRGB>k__BackingField:
-    - BBBGGGGRRRRR
-    <answerBeaker>k__BackingField: BBBGGGGRRRRR
-    <beakerPrefabs>k__BackingField:
-    - {fileID: 5409052935261004982, guid: 3103cf4705b6d8846846e85ace8f8d3b, type: 3}
-    - {fileID: 5409052935261004982, guid: 9570c3d1622e643458417781832cdff1, type: 3}
-    - {fileID: 5409052935261004982, guid: b335de34d3c447b47b447d47bc92529b, type: 3}
-    - {fileID: 5409052935261004982, guid: add96725a6106cb47854e49029738113, type: 3}
-  - <beakerSize>k__BackingField: 0c000000070000000400000094010000
-    <beakerRGB>k__BackingField:
-    - BBBGGGGRRRRR
-    <answerBeaker>k__BackingField: BBBGGGGRRRRR
-    <beakerPrefabs>k__BackingField:
-    - {fileID: 5409052935261004982, guid: 3103cf4705b6d8846846e85ace8f8d3b, type: 3}
-    - {fileID: 5409052935261004982, guid: 9570c3d1622e643458417781832cdff1, type: 3}
-    - {fileID: 5409052935261004982, guid: b335de34d3c447b47b447d47bc92529b, type: 3}
-    - {fileID: 5409052935261004982, guid: add96725a6106cb47854e49029738113, type: 3}
-  - <beakerSize>k__BackingField: 0c000000070000000400000094010000
-    <beakerRGB>k__BackingField:
-    - BBBGGGGRRRRR
-    <answerBeaker>k__BackingField: BBBGGGGRRRRR
-    <beakerPrefabs>k__BackingField:
-    - {fileID: 5409052935261004982, guid: 3103cf4705b6d8846846e85ace8f8d3b, type: 3}
-    - {fileID: 5409052935261004982, guid: 9570c3d1622e643458417781832cdff1, type: 3}
-    - {fileID: 5409052935261004982, guid: b335de34d3c447b47b447d47bc92529b, type: 3}
     - {fileID: 5409052935261004982, guid: add96725a6106cb47854e49029738113, type: 3}
   - <beakerSize>k__BackingField: 0c00000007000000060000000500000094010000
     <beakerRGB>k__BackingField:
@@ -292,6 +228,15 @@ MonoBehaviour:
     - {fileID: 5409052935261004982, guid: e9ffdeb679ac8da48b853df132ed7e00, type: 3}
     - {fileID: 5409052935261004982, guid: 0a7ca2365bd82274f99582dbe8828051, type: 3}
     - {fileID: 5409052935261004982, guid: add96725a6106cb47854e49029738113, type: 3}
+  - <beakerSize>k__BackingField: 0c000000080000000700000094010000
+    <beakerRGB>k__BackingField:
+    - BBBBGGGGRRRR
+    <answerBeaker>k__BackingField: BGR
+    <beakerPrefabs>k__BackingField:
+    - {fileID: 5409052935261004982, guid: 3103cf4705b6d8846846e85ace8f8d3b, type: 3}
+    - {fileID: 5409052935261004982, guid: 22ee45715afe10d4390844dadf31a980, type: 3}
+    - {fileID: 5409052935261004982, guid: 9570c3d1622e643458417781832cdff1, type: 3}
+    - {fileID: 5409052935261004982, guid: add96725a6106cb47854e49029738113, type: 3}
   - <beakerSize>k__BackingField: 0a000000070000000500000094010000
     <beakerRGB>k__BackingField:
     - BBBBGGGRRR
@@ -301,6 +246,54 @@ MonoBehaviour:
     - {fileID: 5409052935261004982, guid: 719d2db70f05c404a98f0ed015244db6, type: 3}
     - {fileID: 5409052935261004982, guid: 9570c3d1622e643458417781832cdff1, type: 3}
     - {fileID: 5409052935261004982, guid: 0a7ca2365bd82274f99582dbe8828051, type: 3}
+    - {fileID: 5409052935261004982, guid: add96725a6106cb47854e49029738113, type: 3}
+  - <beakerSize>k__BackingField: 07000000050000000300000094010000
+    <beakerRGB>k__BackingField:
+    - 
+    - 
+    - 
+    - BBBBGGGGRRRR
+    <answerBeaker>k__BackingField: BBGGRRBGR
+    <beakerPrefabs>k__BackingField:
+    - {fileID: 5409052935261004982, guid: 9570c3d1622e643458417781832cdff1, type: 3}
+    - {fileID: 5409052935261004982, guid: 0a7ca2365bd82274f99582dbe8828051, type: 3}
+    - {fileID: 5409052935261004982, guid: 3873ac3ff43de8e4caf1b0ca7d6e3e28, type: 3}
+    - {fileID: 5409052935261004982, guid: add96725a6106cb47854e49029738113, type: 3}
+  - <beakerSize>k__BackingField: 0c000000070000000400000094010000
+    <beakerRGB>k__BackingField:
+    - BBBGGGGRRRRR
+    <answerBeaker>k__BackingField: BBBGGGGRRRRR
+    <beakerPrefabs>k__BackingField:
+    - {fileID: 5409052935261004982, guid: 3103cf4705b6d8846846e85ace8f8d3b, type: 3}
+    - {fileID: 5409052935261004982, guid: 9570c3d1622e643458417781832cdff1, type: 3}
+    - {fileID: 5409052935261004982, guid: b335de34d3c447b47b447d47bc92529b, type: 3}
+    - {fileID: 5409052935261004982, guid: add96725a6106cb47854e49029738113, type: 3}
+  - <beakerSize>k__BackingField: 0c000000070000000400000094010000
+    <beakerRGB>k__BackingField:
+    - BBBGGGGRRRRR
+    <answerBeaker>k__BackingField: BBBGGGGRRRRR
+    <beakerPrefabs>k__BackingField:
+    - {fileID: 5409052935261004982, guid: 3103cf4705b6d8846846e85ace8f8d3b, type: 3}
+    - {fileID: 5409052935261004982, guid: 9570c3d1622e643458417781832cdff1, type: 3}
+    - {fileID: 5409052935261004982, guid: b335de34d3c447b47b447d47bc92529b, type: 3}
+    - {fileID: 5409052935261004982, guid: add96725a6106cb47854e49029738113, type: 3}
+  - <beakerSize>k__BackingField: 0c000000070000000400000094010000
+    <beakerRGB>k__BackingField:
+    - BBBGGGGRRRRR
+    <answerBeaker>k__BackingField: BBBGGGGRRRRR
+    <beakerPrefabs>k__BackingField:
+    - {fileID: 5409052935261004982, guid: 3103cf4705b6d8846846e85ace8f8d3b, type: 3}
+    - {fileID: 5409052935261004982, guid: 9570c3d1622e643458417781832cdff1, type: 3}
+    - {fileID: 5409052935261004982, guid: b335de34d3c447b47b447d47bc92529b, type: 3}
+    - {fileID: 5409052935261004982, guid: add96725a6106cb47854e49029738113, type: 3}
+  - <beakerSize>k__BackingField: 0c000000080000000700000094010000
+    <beakerRGB>k__BackingField:
+    - BBBBGGGGRRRR
+    <answerBeaker>k__BackingField: BGR
+    <beakerPrefabs>k__BackingField:
+    - {fileID: 5409052935261004982, guid: 3103cf4705b6d8846846e85ace8f8d3b, type: 3}
+    - {fileID: 5409052935261004982, guid: 22ee45715afe10d4390844dadf31a980, type: 3}
+    - {fileID: 5409052935261004982, guid: 9570c3d1622e643458417781832cdff1, type: 3}
     - {fileID: 5409052935261004982, guid: add96725a6106cb47854e49029738113, type: 3}
   - <beakerSize>k__BackingField: 0d0000000b000000080000000400000094010000
     <beakerRGB>k__BackingField:
@@ -315,14 +308,14 @@ MonoBehaviour:
     - {fileID: 5409052935261004982, guid: 22ee45715afe10d4390844dadf31a980, type: 3}
     - {fileID: 5409052935261004982, guid: b335de34d3c447b47b447d47bc92529b, type: 3}
     - {fileID: 5409052935261004982, guid: add96725a6106cb47854e49029738113, type: 3}
-  - <beakerSize>k__BackingField: 0d000000070000000300000094010000
+  - <beakerSize>k__BackingField: 0c000000060000000500000094010000
     <beakerRGB>k__BackingField:
-    - GBGRBBRGGBBGB
-    <answerBeaker>k__BackingField: BBBBBBGGGGGRR
+    - BBBBGGGGRRRR
+    <answerBeaker>k__BackingField: BGRBGR
     <beakerPrefabs>k__BackingField:
-    - {fileID: 5409052935261004982, guid: bd4a7e403f5f7964c80aab4ed7e8e7bb, type: 3}
-    - {fileID: 5409052935261004982, guid: 9570c3d1622e643458417781832cdff1, type: 3}
-    - {fileID: 5409052935261004982, guid: 3873ac3ff43de8e4caf1b0ca7d6e3e28, type: 3}
+    - {fileID: 5409052935261004982, guid: 3103cf4705b6d8846846e85ace8f8d3b, type: 3}
+    - {fileID: 5409052935261004982, guid: e9ffdeb679ac8da48b853df132ed7e00, type: 3}
+    - {fileID: 5409052935261004982, guid: 0a7ca2365bd82274f99582dbe8828051, type: 3}
     - {fileID: 5409052935261004982, guid: add96725a6106cb47854e49029738113, type: 3}
   - <beakerSize>k__BackingField: 0b000000070000000500000094010000
     <beakerRGB>k__BackingField:
@@ -334,6 +327,17 @@ MonoBehaviour:
     - {fileID: 5409052935261004982, guid: 85e972acc1bc5cb4f9737e05266c0ab6, type: 3}
     - {fileID: 5409052935261004982, guid: 9570c3d1622e643458417781832cdff1, type: 3}
     - {fileID: 5409052935261004982, guid: 0a7ca2365bd82274f99582dbe8828051, type: 3}
+    - {fileID: 5409052935261004982, guid: add96725a6106cb47854e49029738113, type: 3}
+  - <beakerSize>k__BackingField: 0d000000070000000300000094010000
+    <beakerRGB>k__BackingField:
+    - GBG
+    - BGBBGGR
+    - BBR
+    <answerBeaker>k__BackingField: BBBBBBGGGGGRR
+    <beakerPrefabs>k__BackingField:
+    - {fileID: 5409052935261004982, guid: bd4a7e403f5f7964c80aab4ed7e8e7bb, type: 3}
+    - {fileID: 5409052935261004982, guid: 9570c3d1622e643458417781832cdff1, type: 3}
+    - {fileID: 5409052935261004982, guid: 3873ac3ff43de8e4caf1b0ca7d6e3e28, type: 3}
     - {fileID: 5409052935261004982, guid: add96725a6106cb47854e49029738113, type: 3}
   - <beakerSize>k__BackingField: 0c000000080000000700000094010000
     <beakerRGB>k__BackingField:
