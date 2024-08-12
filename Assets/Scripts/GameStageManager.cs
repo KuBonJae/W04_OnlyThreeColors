@@ -845,11 +845,9 @@ public class GameStageManager : MonoBehaviour
     }
     public void UpdateGameClearUI()
     {
-        TextMeshProUGUI restartCountText = TextsInGameClear.transform.Find("Restart Text").GetComponent<TextMeshProUGUI>();
         TextMeshProUGUI playerCountText = TextsInGameClear.transform.Find("PlayerCount Text").GetComponent<TextMeshProUGUI>();
         TextMeshProUGUI makerCountText = TextsInGameClear.transform.Find("MakerCount Text").GetComponent<TextMeshProUGUI>();
 
-        restartCountText.SetText($"재시작 횟수 : {playersRestart[curStageNum]}");
         playerCountText.SetText($"내 풀이 횟수 : {playersChoice[curStageNum].Count}");
         makerCountText.SetText($"제작자 풀이 횟수 : {devAnswerCount[curStageNum]}");
 
@@ -987,7 +985,6 @@ public class GameStageManager : MonoBehaviour
         answerPanel.Find("Stage Text").GetComponent<TextMeshProUGUI>().text = StageName;
         answerPanel.Find("Count Text").GetComponent<TextMeshProUGUI>().text = "내 풀이 횟수 : " + playersChoice[playerAnswerStageNum].Count.ToString();
         answerPanel.Find("CorrectCount Text").GetComponent<TextMeshProUGUI>().text = "개발자 풀이 횟수 : " + devAnswerCount[playerAnswerStageNum].ToString();
-        answerPanel.Find("Restart Text").GetComponent<TextMeshProUGUI>().text = "재시작한 횟수 : " + playersRestart[playerAnswerStageNum].ToString();
     }
 
     public void SelectCancelBtnClicked() // 선택 취소 버튼과 연결 -> 현재 같은 버튼 두번 누르면 리셋이라 안씀, 마지막에 지울 것

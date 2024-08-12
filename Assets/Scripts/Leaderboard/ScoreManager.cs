@@ -47,9 +47,9 @@ public class ScoreManager : MonoBehaviour
         for (int i = 10; i < 35; i++)
         {
             //only save 10~14, 20~24, 30~34
-            if(i % 10 > 4)
+            if(i % 10 > 5)
             {
-                i += 4;
+                i = ((i/10) + 1)* 10;
                 continue;
             }
             scoresByStages.Add(gameStageManager.playersChoice[i].Count);
@@ -133,27 +133,6 @@ public class ScoreManager : MonoBehaviour
             {
                 texts[i].SetText($"{i + 1}. {playerScoreListByStage[i].Item1} : {playerScoreListByStage[i].Item2}");
             }
-
-            #region JSON_examples
-            //    if (json[i]["name"].Value == nickName)
-            //    {
-            //        Founded = true;
-            //        if ((float.Parse(json[i]["myScore"][0].Value) - (5 * float.Parse(json[i]["myTime"].Value))) < myScore - 5 * myTime)
-            //        {
-            //            // Update existing score
-            //            RestClient.Put($"https://lightsoul-default-rtdb.firebaseio.com/Scores/{i}.json", newScore.ToJson());
-            //            scoreUpdated = true;
-            //            break;
-            //        }
-            //    }
-            //}
-            //if (!scoreUpdated && !Founded)
-            //{
-            //    // Add new score if no existing score is found
-            //    RestClient.Put($"https://lightsoul-default-rtdb.firebaseio.com/Scores/{scoreChildCount}.json", newScore.ToJson());
-            //    scoreChildCount++;
-            //}
-            #endregion
         });
     }
 
