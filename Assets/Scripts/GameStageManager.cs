@@ -113,6 +113,11 @@ public class GameStageManager : MonoBehaviour
     [Header("About Next Stage Button")]
     public GameObject nextStageButton;
     public int offsetOfLastStagebyDifficulty;
+    //스테이지 다를 경우를 대비한 추가
+    public int lastTutorial;
+    public int lastEasy;
+    public int lastMidium;
+    public int lastHard;
     GameObject currentStageButton;
     //
     // CurrentStageText
@@ -217,11 +222,13 @@ public class GameStageManager : MonoBehaviour
                 firstBeakerSelected = secondBeakerSelected = false;
                 EventSystem.current.SetSelectedGameObject(null); // 버튼 선택된 것 해제 << 이거 해제 안하면 같은 버튼 클릭이 연속으로 안됨
                 canvas_Beaker.transform.GetChild(firstSelectedBeakerNum).Find("Indicator").gameObject.SetActive(false);
+                if(isWaterMoved) // 물이 진짜 옮겨졌을때만 옮기는 작업을 기록한다.
+                {
+                    playersChoice_Temp.Add(new Tuple<int, int>(firstSelectedBeakerNum, secondSelectedBeakerNum));
 
-                playersChoice_Temp.Add(new Tuple<int,int>(firstSelectedBeakerNum, secondSelectedBeakerNum));
-
-                //MoveRGBToAnotherBeaker(firstSelectedBeakerNum, secondSelectedBeakerNum, false);
-                SetBeakersAlphaToMax();
+                    //MoveRGBToAnotherBeaker(firstSelectedBeakerNum, secondSelectedBeakerNum, false);
+                    SetBeakersAlphaToMax();
+                }
             }
         }
 
@@ -667,15 +674,18 @@ public class GameStageManager : MonoBehaviour
     {
         GameObject firstBtn = canvas_Beaker.transform.GetChild(firstSelectedBeakerNum).gameObject;
         GameObject secondBtn = canvas_Beaker.transform.GetChild(secondSelectedBeakerNum).gameObject;
-        Color c;
-        for(int i = 0; i < moveWaterAmount[moveWaterAmount.Count-1];i++) // 알파 값 원상복귀
+        if(isWaterMoved)
         {
-            //c = firstBtn.transform.Find("Image" + (waterInFirstBtn - i).ToString()).GetComponent<Image>().color;
-            //c.a = 1f;
-            firstBtn.transform.Find("Image" + (waterInFirstBtn - i).ToString()).GetComponent<Image>().color = Color.white;
-            c = secondBtn.transform.Find("Image" + (stageBeaker.curBeakerAmount[secondSelectedBeakerNum] - i).ToString()).GetComponent<Image>().color;
-            c.a = 1f;
-            secondBtn.transform.Find("Image" + (stageBeaker.curBeakerAmount[secondSelectedBeakerNum] - i).ToString()).GetComponent<Image>().color = c;
+            Color c;
+            for (int i = 0; i < moveWaterAmount[moveWaterAmount.Count - 1]; i++) // 알파 값 원상복귀
+            {
+                //c = firstBtn.transform.Find("Image" + (waterInFirstBtn - i).ToString()).GetComponent<Image>().color;
+                //c.a = 1f;
+                firstBtn.transform.Find("Image" + (waterInFirstBtn - i).ToString()).GetComponent<Image>().color = Color.white;
+                c = secondBtn.transform.Find("Image" + (stageBeaker.curBeakerAmount[secondSelectedBeakerNum] - i).ToString()).GetComponent<Image>().color;
+                c.a = 1f;
+                secondBtn.transform.Find("Image" + (stageBeaker.curBeakerAmount[secondSelectedBeakerNum] - i).ToString()).GetComponent<Image>().color = c;
+            }
         }
         firstSelectedBeakerNum = secondSelectedBeakerNum = 1995; // 버튼 넘버 초기화
         waterInFirstBtn = 0; // 
@@ -843,7 +853,8 @@ public class GameStageManager : MonoBehaviour
         playerCountText.SetText($"내 풀이 횟수 : {playersChoice[curStageNum].Count}");
         makerCountText.SetText($"제작자 풀이 횟수 : {devAnswerCount[curStageNum]}");
 
-        if(curStageNum == 1 || curStageNum % 10 >= offsetOfLastStagebyDifficulty)
+        //문제 수 다를 경우를 위해 난이도별 체크
+        if (curStageNum == lastTutorial|| curStageNum == lastEasy || curStageNum == lastMidium|| curStageNum == lastHard)
         {
             nextStageButton.SetActive(false);
         }
@@ -886,11 +897,10 @@ public class GameStageManager : MonoBehaviour
 
     void IncreaseCurStageNum()
     {
-        // not for tutorial
-        if(curStageNum % 10 >= 5)
-        {
-            curStageNum = (curStageNum/10) * 10 + 10;
-        }
+        // not for tutorial 각 스테이지의 마지막 이라면 다음 난이도로 변경
+        if (curStageNum == lastTutorial) curStageNum = 10;
+        else if (curStageNum == lastEasy) curStageNum = 20;
+        else if(curStageNum == lastMidium) curStageNum = 30;
         else
         {
             curStageNum++;
