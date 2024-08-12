@@ -125,8 +125,9 @@ public class GameStageManager : MonoBehaviour
     public TextMeshProUGUI tutorialText;
     public TextMeshProUGUI LiterText;
 
-    // 미리보기로 옮겨지기 전 first와 second 버튼의 물의 양
+    // 미리보기로 옮겨지기 전 first 버튼의 물의 양
     int waterInFirstBtn;
+    bool isWaterMoved = false; // 잠시 옮겨진 물의 양
 
     void Awake()
     {
@@ -244,7 +245,7 @@ public class GameStageManager : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(doGameUI.activeSelf && !stageShouldBeReset)
+        if(doGameUI.activeSelf && !stageShouldBeReset && !firstBeakerSelected)
             SubmitBtnClicked();
     }
 
@@ -603,11 +604,12 @@ public class GameStageManager : MonoBehaviour
         string name = eventData.pointerEnter.transform.Find("Name") == null ?
             eventData.pointerEnter.transform.parent.Find("Name").transform.GetComponent<TextMeshProUGUI>().text : eventData.pointerEnter.transform.Find("Name").transform.GetComponent<TextMeshProUGUI>().text;
         // 첫번째 비커가 선택되어 있고, enter 한 비커가 첫번째 비커와 다르다면
-        if (firstBeakerSelected && Convert.ToInt32(name) - 1 != firstSelectedBeakerNum)
+        if (firstBeakerSelected && Convert.ToInt32(name) - 1 != firstSelectedBeakerNum && isWaterMoved)
         { 
             // 반대로 undo함
             MoveRGBToAnotherBeaker(Convert.ToInt32(name) - 1, firstSelectedBeakerNum, true);
             waterInFirstBtn = 0; // 비커가 원복됐으니 값 초기화
+            isWaterMoved = false; // 물 다시 돌아왔으니 옮겨진 물은 없다
         }
     }
 
@@ -677,6 +679,7 @@ public class GameStageManager : MonoBehaviour
         }
         firstSelectedBeakerNum = secondSelectedBeakerNum = 1995; // 버튼 넘버 초기화
         waterInFirstBtn = 0; // 
+        isWaterMoved = false;
     }
     //
 
@@ -684,6 +687,7 @@ public class GameStageManager : MonoBehaviour
     {
         if (stageBeaker.curBeakerAmount[toBeaker] < stageBeaker.beakerSize[toBeaker]) // 해당 번호의 비커가 비어있는 공간이 있을 것
         {
+            isWaterMoved = true; // 물이 옮겨지긴 했다는 것 체크
             int waterMoveAmount = 0;
             Color color;
             while (stageBeaker.curBeakerAmount[toBeaker] < stageBeaker.beakerSize[toBeaker] // 빈 공간이 다 채워질때까지 from 쪽에서 옮겨담음 or
