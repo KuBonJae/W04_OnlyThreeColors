@@ -44,15 +44,13 @@ public class ScoreManager : MonoBehaviour
 
         List<int> scoresByStages = new List<int>();
 
-        for (int i = 10; i < 35; i++)
+        for (int i = 10; i < 40; i++)
         {
-            //only save 10~14, 20~24, 30~34
-            if(i % 10 > 5)
+            int count = gameStageManager.playersChoice[i].Count;
+            if((10 <= i && i <= 15) || (20 <= i && i <= 26) || (30 <= i && i <= 34))
             {
-                i = ((i/10) + 1)* 10;
-                continue;
+                scoresByStages.Add(count);
             }
-            scoresByStages.Add(gameStageManager.playersChoice[i].Count);
         }
 
         User user = new User(inputName.text, scoresByStages);
@@ -80,7 +78,7 @@ public class ScoreManager : MonoBehaviour
                         countInLocal++;
                     }
                 }
-                
+
                 // if the name is already in local and clear counts in db is bigger than in local, do not store.
                 if (userName == inputName.text && countInDB > countInLocal)
                 {
